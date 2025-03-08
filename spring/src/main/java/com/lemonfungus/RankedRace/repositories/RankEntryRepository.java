@@ -10,4 +10,7 @@ public interface RankEntryRepository extends CrudRepository<RankEntryEntity, Int
     List<RankEntryEntity> findByName(String name);
 
     Optional<RankEntryEntity> findTopByNameOrderByGainedDesc(String name);
+
+    List<RankEntryEntity> findByNameOrderByDate(String name);
+
 }

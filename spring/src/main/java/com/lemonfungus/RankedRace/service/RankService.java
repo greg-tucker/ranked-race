@@ -10,9 +10,7 @@ import com.lemonfungus.RankedRace.repositories.RankEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 public class RankService {
@@ -60,6 +58,14 @@ public class RankService {
             );
         }
         return outputSet;
+    }
+
+    public Map<String, List<RankEntryEntity>> getRankTimeline(){
+        var outputMap = new HashMap<String, List<RankEntryEntity>>();
+        for (var player: rankedRaceProperties.getPlayers()) {
+            outputMap.put(player.name(), rankEntryRepository.findByNameOrderByDate(player.name()));
+        }
+        return outputMap;
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)
