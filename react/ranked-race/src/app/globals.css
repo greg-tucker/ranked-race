@@ -1,0 +1,35 @@
+html,
+body {
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
+.rr-title {
+  font-size: 20px;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  margin: 0;
+}
+
+header {
+  background: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+main {
+  flex-grow: 1; /* This makes content fill the remaining space */
+  padding: 1rem;
+}
+
+footer {
+  background: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}

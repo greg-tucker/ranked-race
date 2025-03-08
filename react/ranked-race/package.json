@@ -1,0 +1,33 @@
+{
+  "name": "ranked-race",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix .",
+    "format": "prettier --check --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@mantine/core": "^7.17.1",
+    "@mantine/hooks": "^7.17.1",
+    "@tabler/icons-react": "^3.31.0",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "next": "15.2.1",
+    "prettier": "^3.5.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "9.21.0",
+    "eslint-config-next": "15.2.1",
+    "typescript": "^5"
+  }
+}
