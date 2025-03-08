@@ -5,19 +5,28 @@ import com.lemonfungus.RankedRace.model.Ranks;
 import com.lemonfungus.RankedRace.model.SummonerRankData;
 import com.lemonfungus.RankedRace.model.Tiers;
 import com.lemonfungus.RankedRace.model.dto.LeagueEntryDto;
+import com.lemonfungus.RankedRace.model.entities.RankEntryEntity;
+import com.lemonfungus.RankedRace.repositories.RankEntryRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public class RankService {
     private final RiotApiService riotApiService;
     private final RankedRaceProperties rankedRaceProperties;
+    private final RankEntryRepository rankEntryRepository;
 
     private final String QUEUE_TYPE = "RANKED_SOLO_5x5";
 
-    public RankService(RiotApiService riotApiService, RankedRaceProperties rankedRaceProperties){
+    public RankService(RiotApiService riotApiService, RankedRaceProperties rankedRaceProperties,
+                       RankEntryRepository rankEntryRepository){
         this.riotApiService = riotApiService;
         this.rankedRaceProperties = rankedRaceProperties;
+        this.rankEntryRepository = rankEntryRepository;
     }
 
     public Set<SummonerRankData> getRanks() {
@@ -31,14 +40,14 @@ public class RankService {
             if (optionalEntry.isEmpty()) {
                 continue;
             }
-
             var soloqEntry = optionalEntry.get();
+
+            var peakPlayer = rankEntryRepository.findTopByNameOrderByGainedDesc(player.name());
 
             outputSet.add(
                     SummonerRankData.builder()
                             .name(player.name())
-                            //TODO: Add db call for peak
-                            .peak(999)
+                            .peak(peakPlayer.map(RankEntryEntity::getGained).orElse(-1))
                             .gained(calcLp(soloqEntry) - player.lp())
                             .current(calcLp(soloqEntry))
                             .wins(soloqEntry.wins())
@@ -51,6 +60,16 @@ public class RankService {
             );
         }
         return outputSet;
+    }
+
+    @Scheduled(fixedRate = 2 * 60 * 1000)
+    private void syncDataToDatabase() {
+        log.info("Syncing data");
+        var allRanks = getRanks();
+        for (var rank: allRanks) {
+            log.info("Writing data for {}", rank.name());
+            rankEntryRepository.save(rank.toPlayerEntryEntity(new Date()));
+        }
     }
 
     private int calcLp(LeagueEntryDto leagueEntryDto) {

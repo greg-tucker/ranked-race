@@ -1,5 +1,6 @@
 package com.lemonfungus.RankedRace.config;
 
+import com.lemonfungus.RankedRace.repositories.RankEntryRepository;
 import com.lemonfungus.RankedRace.service.RankService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +28,10 @@ public class RitoConfig {
     }
 
     @Bean
-    public RankService rankService(RiotApiService riotApiService, RankedRaceProperties rankedRaceProperties){
+    public RankService rankService(RiotApiService riotApiService, RankedRaceProperties rankedRaceProperties
+            , RankEntryRepository rankEntryRepository){
         log.info("Propertes {}", rankedRaceProperties.getPlayers());
-        return new RankService(riotApiService, rankedRaceProperties);
+        return new RankService(riotApiService, rankedRaceProperties, rankEntryRepository);
     }
 
     @Bean
