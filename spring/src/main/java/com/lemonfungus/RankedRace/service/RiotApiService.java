@@ -54,7 +54,4 @@ public class RiotApiService {
                 .body(new ParameterizedTypeReference<Set<LeagueEntryDto>>() {
                 });
     }
-
-
-
 }

@@ -1,5 +1,7 @@
 package com.lemonfungus.RankedRace.config;
 
+import com.lemonfungus.RankedRace.service.RankService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import com.lemonfungus.RankedRace.service.RiotApiService;
 import org.springframework.web.client.RestClient;
 
+@Slf4j
 @Configuration
 public class RitoConfig {
     @Value( "${riot.key}" )
@@ -24,6 +27,12 @@ public class RitoConfig {
     }
 
     @Bean
+    public RankService rankService(RiotApiService riotApiService, RankedRaceProperties rankedRaceProperties){
+        log.info("Propertes {}", rankedRaceProperties.getPlayers());
+        return new RankService(riotApiService, rankedRaceProperties);
+    }
+
+    @Bean
     public RestClient accountWebClient() {
         return RestClient.builder()
                 .baseUrl(accountUrl)
@@ -37,5 +46,10 @@ public class RitoConfig {
                 .baseUrl(riotUrl)
                 .defaultHeader("X-Riot-Token", riotApiKey)
                 .build();
+    }
+
+    @Bean
+    public RankedRaceProperties rankedRaceProperties(){
+        return new RankedRaceProperties();
     }
 }

@@ -1,0 +1,31 @@
+riot:
+  region: euw1
+  key: ${APIKEY}
+  url: https://euw1.api.riotgames.com/
+  account-url: https://europe.api.riotgames.com/
+
+rr:
+  players:
+    - name: haudyerwheesht
+      tag: euw
+      lp: 1100
+    - name: mayalover3
+      tag: euw
+      lp: 500
+    - name: nisenna
+      tag: euw
+      lp: 100
+    - name: oystericetea
+      tag: euw
+      lp: 200
+
+spring:
+  application:
+    name: RankedRace
+  threads:
+    virtual:
+      enabled: 'true'
+
+springdoc:
+  swagger-ui:
+    path: /swagger
