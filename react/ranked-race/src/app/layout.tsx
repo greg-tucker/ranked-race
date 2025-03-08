@@ -3,14 +3,11 @@
 import '@mantine/core/styles.css';
 import './globals.css';
 
-import {
-  MantineProvider,
-  mantineHtmlProps,
-} from '@mantine/core';
+import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 
 export const metadata = {
   title: 'Ranked Race',
-  description: 'The best tracker of LP there is.'
+  description: 'The best tracker of LP there is.',
 };
 
 export default function RootLayout({
