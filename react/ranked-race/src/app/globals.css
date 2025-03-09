@@ -7,7 +7,7 @@ body {
 }
 .rr-title {
   font-size: 20px;
-  color: #c28a2b;
+  color: #C89B3C;
   font-weight: bold;
 }
 body {
@@ -39,6 +39,11 @@ footer {
 h1,
 h2,
 h3 {
-  color: #c28a2b;
+  color: #C89B3C;
   font-weight: bold;
+}
+
+.mantine-Button-root {
+  background-color: #005A82;
+  color: #C89B3C;
 }
