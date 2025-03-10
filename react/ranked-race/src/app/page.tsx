@@ -36,9 +36,9 @@ export default function HomePage() {
         <main>
           <h3>Most Epic Ranking!</h3>
           <MainRankings />
+          <AudioPlayer closeModal={close} audioRef={audioRef} text='Toggle music' />
         </main>
         <footer>Brought to you by Greg, Zi, Nikki</footer>
-        <AudioPlayer closeModal={close} audioRef={audioRef} text='Toggle music' />
       </div>
     </>
   );

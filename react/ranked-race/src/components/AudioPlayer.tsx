@@ -11,7 +11,8 @@ interface AudioPlayerProps {
 export default function AudioPlayer({ closeModal, audioRef, text }: AudioPlayerProps) {
 
   const playSong = () => {
-    if (audioRef.current) { // Optional chaining to avoid errors
+    if (audioRef.current) {
+      audioRef.current.volume = 0.2;
       if (audioRef.current.paused) {
         audioRef.current.play().catch((err) => console.error('Play failed:', err)); // Handle play errors
       } else {
