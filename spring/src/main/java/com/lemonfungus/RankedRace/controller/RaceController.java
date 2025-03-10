@@ -19,13 +19,13 @@ import java.util.Set;
 public class RaceController {
     private RankService rankService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin
     @GetMapping("/rank")
     public Set<SummonerRankData> getRanks(){
         return rankService.getRanks();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin
     @GetMapping("/ranktimeline")
     public Map<String, List<RankEntryEntity>> getRankTimeline(){
         return rankService.getRankTimeline();
