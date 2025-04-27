@@ -1,6 +1,7 @@
 'use client';
 
 import AudioPlayer from '@/components/AudioPlayer';
+import { Graph } from '@/components/Graph';
 import { HeaderMenu } from '@/components/HeaderMenu';
 import { MainRankings } from '@/components/MainRankings';
 import { Modal } from '@mantine/core';
@@ -10,6 +11,8 @@ import { useRef } from 'react';
 export default function HomePage() {
   const [opened, { close }] = useDisclosure(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const [openMayalover3, { closeMayalover3 }] = useDisclosure(true);
 
   return (
     <>
@@ -36,6 +39,7 @@ export default function HomePage() {
         <main>
           <h3>Most Epic Ranking!</h3>
           <MainRankings />
+          <Graph />
           <AudioPlayer closeModal={close} audioRef={audioRef} text='Toggle music' />
         </main>
         <footer>Brought to you by Greg, Zi, Nikki</footer>

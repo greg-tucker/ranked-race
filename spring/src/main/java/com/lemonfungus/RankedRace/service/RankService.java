@@ -68,6 +68,17 @@ public class RankService {
         return outputMap;
     }
 
+    public List<Map<String, Object>> getIndividualRankTimeline(String player){
+        var outputMap = new HashMap<String, List<Map<String, Object>>>();
+        var data = rankEntryRepository.findByNameOrderByDate(player);
+        for (RankEntryEntity dataPoint : data) {
+            List<Map<String, Object>> datapoints = new ArrayList<>();
+            datapoints.add(Map.of("date", dataPoint.getDate(), "currentLp", dataPoint.getGained()));
+            outputMap.put(player, datapoints);
+        }
+        return outputMap.getOrDefault(player, null);
+    }
+
     @Scheduled(fixedRate = 2 * 60 * 1000)
     private void syncDataToDatabase() {
         log.info("Syncing data");

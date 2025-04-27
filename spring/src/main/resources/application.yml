@@ -18,6 +18,12 @@ rr:
     - name: oystericetea
       tag: euw
       lp: 200
+    - name: broclee
+      tag: POG
+      lp: 0
+    - name: jigoa
+      tag: xdd
+      lp: 2100
 
 spring:
   application:
