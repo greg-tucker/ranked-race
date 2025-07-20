@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -64,19 +63,19 @@ public class RankService {
         return outputSet;
     }
 
-    public List<Map<String, Object>> getRankTimeline() {
-        Map<String, Map<String, Object>> outputMap = new LinkedHashMap<>();
+    public List<Map<String, String>> getRankTimeline() {
+        Map<String, Map<String, String>> outputMap = new LinkedHashMap<>();
 
         var data = rankEntryRepository.findAll();
         for (RankEntryEntity dataPoint : data) {
             var date = formatDate(dataPoint.getDate());
-            Map<String, Object> entry = outputMap.computeIfAbsent(date, k -> {
-                Map<String, Object> map = new LinkedHashMap<>();
+            Map<String, String> entry = outputMap.computeIfAbsent(date, k -> {
+                Map<String, String> map = new LinkedHashMap<>();
                 map.put("date", k);
                 return map;
             });
 
-            entry.put(dataPoint.getName(), dataPoint.getGained());
+            entry.put(dataPoint.getName(), String.valueOf(dataPoint.getGained()));
         }
 
         return new ArrayList<>(outputMap.values());
