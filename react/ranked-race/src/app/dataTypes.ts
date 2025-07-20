@@ -9,6 +9,7 @@ export type MainRankingsData = {
   tier: string;
   rank: string;
   lp: number;
+  date: string;
 };
 
 export const visibleColumns :(keyof MainRankingsData)[] = [

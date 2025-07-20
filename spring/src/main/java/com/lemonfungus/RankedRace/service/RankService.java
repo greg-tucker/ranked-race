@@ -10,6 +10,9 @@ import com.lemonfungus.RankedRace.repositories.RankEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -60,12 +63,22 @@ public class RankService {
         return outputSet;
     }
 
-    public Map<String, List<RankEntryEntity>> getRankTimeline(){
-        var outputMap = new HashMap<String, List<RankEntryEntity>>();
-        for (var player: rankedRaceProperties.getPlayers()) {
-            outputMap.put(player.name(), rankEntryRepository.findByNameOrderByDate(player.name()));
+    public List<Map<String, String>> getRankTimeline() {
+        Map<String, Map<String, String>> outputMap = new LinkedHashMap<>();
+
+        var data = rankEntryRepository.findAll();
+        for (RankEntryEntity dataPoint : data) {
+            var date = formatDate(dataPoint.getDate());
+            Map<String, String> entry = outputMap.computeIfAbsent(date, k -> {
+                Map<String, String> map = new LinkedHashMap<>();
+                map.put("date", k);
+                return map;
+            });
+
+            entry.put(dataPoint.getName(), String.valueOf(dataPoint.getGained()));
         }
-        return outputMap;
+
+        return new ArrayList<>(outputMap.values());
     }
 
     @Scheduled(fixedRate = 2 * 60 * 1000)
@@ -76,6 +89,12 @@ public class RankService {
             log.info("Writing data for {}", rank.name());
             rankEntryRepository.save(rank.toPlayerEntryEntity(new Date()));
         }
+    }
+
+    private String formatDate(Date date) {
+        OffsetDateTime dateTime = date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d HH:mm", Locale.ENGLISH);
+        return dateTime.format(formatter);
     }
 
     private int calcLp(LeagueEntryDto leagueEntryDto) {

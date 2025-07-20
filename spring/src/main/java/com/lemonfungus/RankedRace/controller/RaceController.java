@@ -1,7 +1,6 @@
 package com.lemonfungus.RankedRace.controller;
 
 import com.lemonfungus.RankedRace.model.SummonerRankData;
-import com.lemonfungus.RankedRace.model.entities.RankEntryEntity;
 import com.lemonfungus.RankedRace.service.RankService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -25,9 +22,9 @@ public class RaceController {
         return rankService.getRanks();
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/ranktimeline")
-    public Map<String, List<RankEntryEntity>> getRankTimeline(){
+    public List<Map<String, String>> getRankTimeline(){
         return rankService.getRankTimeline();
     }
 }

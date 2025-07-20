@@ -2,7 +2,7 @@
 
 import AudioPlayer from '@/components/AudioPlayer';
 import { HeaderMenu } from '@/components/HeaderMenu';
-import { MainRankings } from '@/components/MainRankings';
+import { NavTabs } from '@/components/NavTabs';
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRef } from 'react';
@@ -35,9 +35,10 @@ export default function HomePage() {
         <HeaderMenu />
         <main>
           <h3>Most Epic Ranking!</h3>
-          <MainRankings />
+          <NavTabs />
           <AudioPlayer closeModal={close} audioRef={audioRef} text='Toggle music' />
         </main>
+
         <footer>Brought to you by Greg, Zi, Nikki</footer>
       </div>
     </>
