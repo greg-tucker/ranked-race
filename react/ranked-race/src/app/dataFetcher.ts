@@ -3,7 +3,7 @@ import { MainRankingsData } from '@/app/dataTypes';
 import { useEffect } from 'react';
 
 export async function getCurrentRanking(
-  setter: Dispatch<SetStateAction<MainRankingsData[]>>
+  setter: Dispatch<MainRankingsData[]>
 ) {
   const url = `${process.env.NEXT_PUBLIC_RR_BACKEND_URL}rank`;
   try {
