@@ -8,11 +8,10 @@ export function MainRankings() {
   const [rankings, setRankings] = useState<MainRankingsData[]>([]);
 
   useEffect(() => {
-    // getCurrentRanking((data) => {
-    //   // const rankingList = Array.from(data);
-    //   // const sortedData = rankingList.sort((a, b) => b.gained - a.gained);
-    //   setRankings([]);
-    // });
+    getCurrentRanking((data) => {
+      const sortedData = [...data].sort((a, b) => b.gained - a.gained);
+      setRankings(sortedData);
+    });
   }, []);
 
   return (
@@ -29,7 +28,7 @@ export function MainRankings() {
           {rankings.map((row) => (
             <Table.Tr key={row.name + 'row'}>
               {visibleColumns.map((column) => (
-                <Table.Th key={row.name + column}>{row[column]}</Table.Th>
+                <Table.Td key={row.name + column}>{String(row[column])}</Table.Td>
               ))}
             </Table.Tr>
           ))}
