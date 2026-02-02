@@ -18,19 +18,6 @@ export default function HomePage() {
         Gods
       </audio>
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        withCloseButton={false}
-        fullScreen
-        centered
-        transitionProps={{ transition: 'fade', duration: 200 }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
-          {/* <AudioPlayer closeModal={close} audioRef={audioRef.current?} text='ARE YOU READY???' /> */}
-        </div>
-      </Modal>
-
       <div>
         <HeaderMenu />
         <main>

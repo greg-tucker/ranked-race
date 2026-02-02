@@ -8,11 +8,11 @@ export function MainRankings() {
   const [rankings, setRankings] = useState<MainRankingsData[]>([]);
 
   useEffect(() => {
-    getCurrentRanking((data) => {
-      // const rankingList = Array.from(data);
-      // const sortedData = rankingList.sort((a, b) => b.gained - a.gained);
-      setRankings([]);
-    });
+    // getCurrentRanking((data) => {
+    //   // const rankingList = Array.from(data);
+    //   // const sortedData = rankingList.sort((a, b) => b.gained - a.gained);
+    //   setRankings([]);
+    // });
   }, []);
 
   return (

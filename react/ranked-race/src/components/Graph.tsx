@@ -11,10 +11,10 @@ export function Graph() {
   const [rankHistory, setRankHistory] = useState<MainRankingsData[]>([]);
 
   useEffect(() => {
-    const fetchAndSet = () => getRankHistory(setRankHistory);
-    fetchAndSet();
-    const interval = setInterval(fetchAndSet, 120000); // poll every 2min
-    return () => clearInterval(interval); // cleanup
+    // const fetchAndSet = () => getRankHistory(setRankHistory);
+    // fetchAndSet();
+    // const interval = setInterval(fetchAndSet, 120000); // poll every 2min
+    // return () => clearInterval(interval); // cleanup
   }, []);
 
   const series = [
