@@ -9,9 +9,9 @@ export function MainRankings() {
 
   useEffect(() => {
     getCurrentRanking((data) => {
-      const rankingList = Array.from(data);
-      const sortedData = rankingList.sort((a, b) => b.gained - a.gained);
-      setRankings(sortedData);
+      // const rankingList = Array.from(data);
+      // const sortedData = rankingList.sort((a, b) => b.gained - a.gained);
+      setRankings([]);
     });
   }, []);
 

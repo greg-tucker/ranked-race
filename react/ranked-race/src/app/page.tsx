@@ -9,7 +9,7 @@ import { useRef } from 'react';
 
 export default function HomePage() {
   const [opened, { close }] = useDisclosure(true);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function HomePage() {
         transitionProps={{ transition: 'fade', duration: 200 }}
       >
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
-          <AudioPlayer closeModal={close} audioRef={audioRef} text='ARE YOU READY???' />
+          {/* <AudioPlayer closeModal={close} audioRef={audioRef.current?} text='ARE YOU READY???' /> */}
         </div>
       </Modal>
 
@@ -36,7 +36,7 @@ export default function HomePage() {
         <main>
           <h3>Most Epic Ranking!</h3>
           <NavTabs />
-          <AudioPlayer closeModal={close} audioRef={audioRef} text='Toggle music' />
+          {/* <AudioPlayer closeModal={close} audioRef={audioRef.current} text='Toggle music' /> */}
         </main>
 
         <footer>Brought to you by Greg, Zi, Nikki</footer>
