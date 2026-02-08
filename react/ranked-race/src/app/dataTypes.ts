@@ -10,13 +10,14 @@ export type MainRankingsData = {
   rank: string;
   lp: number;
   date: string;
+  displayRank: string
+  winRate: string
 };
 
 export const visibleColumns :(keyof MainRankingsData)[] = [
   'name',
-  'peak',
-  'gained',
-  'current',
+  'displayRank',
+  'winRate',
   'wins',
   'losses',
 ];

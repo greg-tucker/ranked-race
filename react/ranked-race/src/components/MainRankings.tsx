@@ -9,7 +9,7 @@ export function MainRankings() {
 
   useEffect(() => {
     getCurrentRanking((data) => {
-      const sortedData = [...data].sort((a, b) => b.gained - a.gained);
+      const sortedData = [...data].sort((a, b) => b.current - a.current);
       setRankings(sortedData);
     });
   }, []);

@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"math"
 	"os"
 	"time"
 
@@ -31,17 +33,19 @@ type rankedEntry struct {
 }
 
 type PlayerStats struct {
-	Name    string `json:"name"`
-	Peak    int    `json:"peak"`
-	Gained  int    `json:"gained"`
-	Current int    `json:"current"`
-	Wins    int    `json:"wins"`
-	Losses  int    `json:"losses"`
-	Played  int    `json:"played"`
-	Tier    string `json:"tier"`
-	Rank    string `json:"rank"`
-	LP      int    `json:"lp"`
-	Date    string `json:"date"`
+	Name        string `json:"name"`
+	Peak        int    `json:"peak"`
+	Gained      int    `json:"gained"`
+	Current     int    `json:"current"`
+	Wins        int    `json:"wins"`
+	Losses      int    `json:"losses"`
+	Played      int    `json:"played"`
+	Tier        string `json:"tier"`
+	Rank        string `json:"rank"`
+	LP          int    `json:"lp"`
+	Date        string `json:"date"`
+	WinRate     string `json:"winRate"`
+	DisplayRank string `json:"displayRank"`
 }
 
 func check(e error) {
@@ -56,15 +60,17 @@ func isSoloQueue(entry rankedEntry) bool {
 
 func toPlayerStats(entry rankedEntry, name string) PlayerStats {
 	return PlayerStats{
-		Name:    name,
-		Tier:    entry.Tier,
-		Rank:    entry.Rank,
-		Wins:    entry.Wins,
-		Losses:  entry.Losses,
-		Played:  entry.Wins + entry.Losses,
-		LP:      entry.LeaguePoints,
-		Current: calculateLp(entry),
-		Date:    time.Now().Format("2006-01-02"),
+		Name:        name,
+		Tier:        entry.Tier,
+		Rank:        entry.Rank,
+		Wins:        entry.Wins,
+		Losses:      entry.Losses,
+		Played:      entry.Wins + entry.Losses,
+		LP:          entry.LeaguePoints,
+		Current:     calculateLp(entry),
+		Date:        time.Now().Format("2006-01-02"),
+		WinRate:     fmt.Sprint(math.Round(100*float64(entry.Wins))/float64(entry.Wins+entry.Losses)) + "%",
+		DisplayRank: entry.Tier + " " + entry.Rank + " " + fmt.Sprint(entry.LeaguePoints) + " LP",
 	}
 }
 
@@ -144,6 +150,10 @@ var users = []string{
 	"Bjerkingfan/EUW",
 	"ctrl alt cute/xoxo",
 	"oystericetea/EUW",
+	"Pissinglnthewind/EUW",
+	"mayalover3/EUW",
+	"SnazzyG/EUW",
+	"crochecha/EUW",
 }
 
 var metals = map[string]int{
