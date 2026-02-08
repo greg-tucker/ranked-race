@@ -56,26 +56,25 @@ func isSoloQueue(entry rankedEntry) bool {
 
 func toPlayerStats(entry rankedEntry, name string) PlayerStats {
 	return PlayerStats{
-		Name:   name,
-		Tier:   entry.Tier,
-		Rank:   entry.Rank,
-		Wins:   entry.Wins,
-		Losses: entry.Losses,
-		Played: entry.Wins + entry.Losses,
-		LP:     entry.LeaguePoints,
-		Date:   time.Now().Format("2006-01-02"),
+		Name:    name,
+		Tier:    entry.Tier,
+		Rank:    entry.Rank,
+		Wins:    entry.Wins,
+		Losses:  entry.Losses,
+		Played:  entry.Wins + entry.Losses,
+		LP:      entry.LeaguePoints,
+		Current: calculateLp(entry),
+		Date:    time.Now().Format("2006-01-02"),
 	}
 }
 
-func main() {
-	apiKey := os.Getenv("RIOT_API_KEY")
-	baseUrl := "https://europe.api.riotgames.com/"
-	serverBaseUrl := "https://euw1.api.riotgames.com/"
-	accountsPath := "riot/account/v1/accounts/by-riot-id/"
-	entriesPath := "lol/league/v4/entries/by-puuid/"
-	apiKeyParam := "?api_key=" + apiKey
+func calculateLp(entry rankedEntry) int {
+	metalIndex := metals[entry.Tier]
+	return metalIndex*400 + ranksMap[entry.Rank]*100 + entry.LeaguePoints
+}
 
-	resp, err := http.Get(baseUrl + accountsPath + "Impala/KAZ" + apiKeyParam)
+func getPlayerStats(nameAndTag string) PlayerStats {
+	resp, err := http.Get(baseUrl + accountsPath + nameAndTag + apiKeyParam)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -101,6 +100,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	//We Read the response body on the line below.
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
@@ -130,8 +130,47 @@ func main() {
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
+	return playerStats
+}
+
+var apiKey = os.Getenv("RIOT_API_KEY")
+var baseUrl = "https://europe.api.riotgames.com/"
+var serverBaseUrl = "https://euw1.api.riotgames.com/"
+var accountsPath = "riot/account/v1/accounts/by-riot-id/"
+var entriesPath = "lol/league/v4/entries/by-puuid/"
+var apiKeyParam = "?api_key=" + apiKey
+var users = []string{
+	"Impala/KAZ",
+	"Bjerkingfan/EUW",
+	"ctrl alt cute/xoxo",
+	"oystericetea/EUW",
+}
+
+var metals = map[string]int{
+	"IRON":     0,
+	"BRONZE":   1,
+	"SILVER":   2,
+	"GOLD":     3,
+	"PLATINUM": 4,
+	"EMERALD":  5,
+	"DIAMOND":  6,
+	"MASTER":   7,
+}
+
+var ranksMap = map[string]int{
+	"I":   3,
+	"II":  2,
+	"III": 1,
+	"IV":  0,
+}
+
+func main() {
+
 	var playerStatsList []PlayerStats
-	playerStatsList = append(playerStatsList, playerStats)
+	for _, user := range users {
+		playerStats := getPlayerStats(user)
+		playerStatsList = append(playerStatsList, playerStats)
+	}
 
 	router := gin.Default()
 
