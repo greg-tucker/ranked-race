@@ -11,6 +11,8 @@ import (
 
 	"log"
 	"net/http"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type account struct {
@@ -128,6 +130,9 @@ func main() {
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
+	var playerStatsList []PlayerStats
+	playerStatsList = append(playerStatsList, playerStats)
+
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -153,7 +158,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 	router.GET("/rank", func(c *gin.Context) {
-		c.JSON(200, playerStats)
+		c.JSON(200, playerStatsList)
 	})
 
 	router.Run() // listens on 0.0.0.0:8080 by default
