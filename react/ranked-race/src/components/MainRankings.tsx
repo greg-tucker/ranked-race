@@ -30,9 +30,9 @@ export function MainRankings() {
     <Table.Tr key={row.name}>
       {visibleColumns.map((column) => (
         <Table.Td key={column.key}>
-          {'render' in column
-            ? column.render(row)
-            : String(row[column.key])}
+        {typeof column.render === 'function'
+          ? column.render(row)
+          : String(row[column.key])}
         </Table.Td>
       ))}
     </Table.Tr>

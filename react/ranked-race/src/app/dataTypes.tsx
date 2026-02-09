@@ -15,6 +15,7 @@ export type MainRankingsData = {
   displayRank: string;
   winRate: string;
   tag: string;
+  opgg: string;
 };
 
 export type ColumnKey = keyof MainRankingsData | 'opgg';
