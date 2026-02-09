@@ -46,6 +46,12 @@ type PlayerStats struct {
 	Date        string `json:"date"`
 	WinRate     string `json:"winRate"`
 	DisplayRank string `json:"displayRank"`
+	Tag         string `json:"tag"`
+}
+
+type InputPlayer struct {
+	Name string
+	Tag  string
 }
 
 func check(e error) {
@@ -58,7 +64,7 @@ func isSoloQueue(entry rankedEntry) bool {
 	return entry.QueueType == "RANKED_SOLO_5x5"
 }
 
-func toPlayerStats(entry rankedEntry, name string) PlayerStats {
+func toPlayerStats(entry rankedEntry, name string, tag string) PlayerStats {
 	return PlayerStats{
 		Name:        name,
 		Tier:        entry.Tier,
@@ -69,8 +75,9 @@ func toPlayerStats(entry rankedEntry, name string) PlayerStats {
 		LP:          entry.LeaguePoints,
 		Current:     calculateLp(entry),
 		Date:        time.Now().Format("2006-01-02"),
-		WinRate:     fmt.Sprint(math.Round(100*float64(entry.Wins))/float64(entry.Wins+entry.Losses)) + "%",
+		WinRate:     fmt.Sprint(math.Round(10000*float64(entry.Wins)/(float64(entry.Wins+entry.Losses)))/100) + "%",
 		DisplayRank: entry.Tier + " " + entry.Rank + " " + fmt.Sprint(entry.LeaguePoints) + " LP",
+		Tag:         tag,
 	}
 }
 
@@ -79,8 +86,8 @@ func calculateLp(entry rankedEntry) int {
 	return metalIndex*400 + ranksMap[entry.Rank]*100 + entry.LeaguePoints
 }
 
-func getPlayerStats(nameAndTag string) PlayerStats {
-	resp, err := http.Get(baseUrl + accountsPath + nameAndTag + apiKeyParam)
+func getPlayerStats(inputPlayer InputPlayer) PlayerStats {
+	resp, err := http.Get(baseUrl + accountsPath + inputPlayer.Name + "/" + inputPlayer.Tag + apiKeyParam)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -132,7 +139,7 @@ func getPlayerStats(nameAndTag string) PlayerStats {
 
 	log.Printf("SOLO QUEUE %+v\n", soloQueue)
 
-	playerStats := toPlayerStats(soloQueue, acc.GameName)
+	playerStats := toPlayerStats(soloQueue, acc.GameName, inputPlayer.Tag)
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
@@ -145,15 +152,17 @@ var serverBaseUrl = "https://euw1.api.riotgames.com/"
 var accountsPath = "riot/account/v1/accounts/by-riot-id/"
 var entriesPath = "lol/league/v4/entries/by-puuid/"
 var apiKeyParam = "?api_key=" + apiKey
-var users = []string{
-	"Impala/KAZ",
-	"Bjerkingfan/EUW",
-	"ctrl alt cute/xoxo",
-	"oystericetea/EUW",
-	"Pissinglnthewind/EUW",
-	"mayalover3/EUW",
-	"SnazzyG/EUW",
-	"crochecha/EUW",
+var users = []InputPlayer{
+	{Name: "Impala", Tag: "KAZ"},
+	{Name: "Bjerkingfan", Tag: "EUW"},
+	{Name: "ctrl alt cute", Tag: "xoxo"},
+	{Name: "oystericetea", Tag: "EUW"},
+	{Name: "Pissinglnthewind", Tag: "EUW"},
+	{Name: "mayalover3", Tag: "EUW"},
+	{Name: "SnazzyG", Tag: "EUW"},
+	{Name: "crochecha", Tag: "EUW"},
+	{Name: "jigoa", Tag: "XDD"},
+	{Name: "nisenna", Tag: "EUW"},
 }
 
 var metals = map[string]int{

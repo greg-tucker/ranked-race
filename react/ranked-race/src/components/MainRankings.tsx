@@ -17,22 +17,28 @@ export function MainRankings() {
   return (
     <div>
       <Table verticalSpacing="xs">
-        <Table.Thead>
-          <Table.Tr>
-            {visibleColumns.map((column) => (
-              <Table.Th key={column}>{column}</Table.Th>
-            ))}
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {rankings.map((row) => (
-            <Table.Tr key={row.name + 'row'}>
-              {visibleColumns.map((column) => (
-                <Table.Td key={row.name + column}>{String(row[column])}</Table.Td>
-              ))}
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
+<Table.Thead>
+  <Table.Tr>
+    {visibleColumns.map((column) => (
+      <Table.Th key={column.key}>{column.label}</Table.Th>
+    ))}
+  </Table.Tr>
+</Table.Thead>
+
+<Table.Tbody>
+  {rankings.map((row) => (
+    <Table.Tr key={row.name}>
+      {visibleColumns.map((column) => (
+        <Table.Td key={column.key}>
+          {'render' in column
+            ? column.render(row)
+            : String(row[column.key])}
+        </Table.Td>
+      ))}
+    </Table.Tr>
+  ))}
+</Table.Tbody>
+
       </Table>
     </div>
   );

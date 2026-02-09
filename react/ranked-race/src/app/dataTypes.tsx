@@ -1,0 +1,64 @@
+import Image from "next/image";
+
+export type MainRankingsData = {
+  name: string;
+  peak: number;
+  gained: number;
+  current: number;
+  wins: number;
+  losses: number;
+  played: number;
+  tier: string;
+  rank: string;
+  lp: number;
+  date: string;
+  displayRank: string;
+  winRate: string;
+  tag: string;
+};
+
+export type ColumnKey = keyof MainRankingsData | 'opgg';
+
+
+export const visibleColumns: {
+  key: ColumnKey;
+  label: string;
+  render?: (row: MainRankingsData) => React.ReactNode;
+}[] = [
+  { key: 'name', label: 'Name' },
+  { key: 'displayRank', label: 'Rank',
+    render: (row) => { if (row.tier) {
+      return <div>
+      <Image src={`/static/${row.tier}.png`} alt="gold" width="50" height= "50"/>
+      {row.displayRank}
+      </div>;
+      }
+     return <div> This loser is unranked </div>
+  }
+  },
+  {
+    key: 'opgg',
+    label: 'OP.GG',
+    render: (row) => (
+      <a
+        href={`https://www.op.gg/summoners/euw/${encodeURIComponent(row.name)}%20-${row.tag}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Image src="/static/opgg.svg" alt="OP.GG" width="50" height="20" />
+      </a>
+    ),
+  },
+  {
+    key: 'winRate',
+    label: 'Win Rate'
+  },
+  {
+    key: 'wins',
+    label: 'Wins'
+  },
+    {
+    key: 'losses',
+    label: 'Losses'
+  },
+];
