@@ -30,7 +30,7 @@ export const visibleColumns: {
   { key: 'displayRank', label: 'Rank',
     render: (row) => { if (row.tier) {
       return <div>
-      <Image src={`/static/${row.tier}.png`} alt="gold" width="50" height= "50"/>
+      <Image src={`/static/${row.tier}.png`} alt="" width={50} height= {50}/>
       {row.displayRank}
       </div>;
       }
