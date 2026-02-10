@@ -33,20 +33,20 @@ type rankedEntry struct {
 }
 
 type PlayerStats struct {
-	Name        string `json:"name"`
-	Peak        int    `json:"peak"`
-	Gained      int    `json:"gained"`
-	Current     int    `json:"current"`
-	Wins        int    `json:"wins"`
-	Losses      int    `json:"losses"`
-	Played      int    `json:"played"`
-	Tier        string `json:"tier"`
-	Rank        string `json:"rank"`
-	LP          int    `json:"lp"`
-	Date        string `json:"date"`
-	WinRate     string `json:"winRate"`
-	DisplayRank string `json:"displayRank"`
-	Tag         string `json:"tag"`
+	Name        string  `json:"name"`
+	Peak        int     `json:"peak"`
+	Gained      int     `json:"gained"`
+	Current     int     `json:"current"`
+	Wins        int     `json:"wins"`
+	Losses      int     `json:"losses"`
+	Played      int     `json:"played"`
+	Tier        string  `json:"tier"`
+	Rank        string  `json:"rank"`
+	LP          int     `json:"lp"`
+	Date        string  `json:"date"`
+	WinRate     float64 `json:"winRate"`
+	DisplayRank string  `json:"displayRank"`
+	Tag         string  `json:"tag"`
 }
 
 type InputPlayer struct {
@@ -65,6 +65,11 @@ func isSoloQueue(entry rankedEntry) bool {
 }
 
 func toPlayerStats(entry rankedEntry, name string, tag string) PlayerStats {
+	totalGames := entry.Wins + entry.Losses
+	var winrate float64 = 0
+	if totalGames != 0 {
+		winrate = math.Round(10000*float64(entry.Wins)/(float64(entry.Wins+entry.Losses))) / 100
+	}
 	return PlayerStats{
 		Name:        name,
 		Tier:        entry.Tier,
@@ -75,7 +80,7 @@ func toPlayerStats(entry rankedEntry, name string, tag string) PlayerStats {
 		LP:          entry.LeaguePoints,
 		Current:     calculateLp(entry),
 		Date:        time.Now().Format("2006-01-02"),
-		WinRate:     fmt.Sprint(math.Round(10000*float64(entry.Wins)/(float64(entry.Wins+entry.Losses)))/100) + "%",
+		WinRate:     winrate,
 		DisplayRank: entry.Tier + " " + entry.Rank + " " + fmt.Sprint(entry.LeaguePoints) + " LP",
 		Tag:         tag,
 	}
@@ -163,6 +168,9 @@ var users = []InputPlayer{
 	{Name: "crochecha", Tag: "EUW"},
 	{Name: "jigoa", Tag: "XDD"},
 	{Name: "nisenna", Tag: "EUW"},
+	{Name: "OneLargeBoi", Tag: "EUW"},
+	{Name: "gemgeffery", Tag: "EUW"},
+	{Name: "Purple Volvo", Tag: "EUW"},
 }
 
 var metals = map[string]int{

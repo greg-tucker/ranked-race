@@ -13,7 +13,7 @@ export type MainRankingsData = {
   lp: number;
   date: string;
   displayRank: string;
-  winRate: string;
+  winRate: number;
   tag: string;
   opgg: string;
 };
@@ -67,6 +67,9 @@ export const visibleColumns: {
   {
     key: 'winRate',
     label: 'Win Rate',
+    render: (row) => (
+        <div className={row.winRate > 50 ? 'green' : 'red'}>{row.winRate}%</div>
+    ),
   },
   {
     key: 'wins',
@@ -76,4 +79,8 @@ export const visibleColumns: {
     key: 'losses',
     label: 'Losses',
   },
+  {
+    key: 'played',
+    label: 'Total Games'
+  }
 ];

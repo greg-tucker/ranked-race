@@ -47,3 +47,13 @@ h3 {
   background-color: #005a82;
   color: #c89b3c;
 }
+
+.red {
+  color: red;
+  font-weight: bold;
+}
+
+.green {
+  color: lightgreen;
+  font-weight: bold;
+}
