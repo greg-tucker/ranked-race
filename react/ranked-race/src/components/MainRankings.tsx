@@ -1,5 +1,5 @@
 'use client';
-import { MainRankingsData, visibleColumns } from '@/app/dataTypes';
+import { MainRankingsData, visibleColumns } from '@/components/dataTypes';
 import { useEffect, useState } from 'react';
 import { getCurrentRanking } from '@/app/dataFetcher';
 import { Table } from '@mantine/core';
@@ -17,28 +17,27 @@ export function MainRankings() {
   return (
     <div>
       <Table verticalSpacing="xs">
-<Table.Thead>
-  <Table.Tr>
-    {visibleColumns.map((column) => (
-      <Table.Th key={column.key}>{column.label}</Table.Th>
-    ))}
-  </Table.Tr>
-</Table.Thead>
+        <Table.Thead>
+          <Table.Tr>
+            {visibleColumns.map((column) => (
+              <Table.Th key={column.key}>{column.label}</Table.Th>
+            ))}
+          </Table.Tr>
+        </Table.Thead>
 
-<Table.Tbody>
-  {rankings.map((row) => (
-    <Table.Tr key={row.name}>
-      {visibleColumns.map((column) => (
-        <Table.Td key={column.key}>
-        {typeof column.render === 'function'
-          ? column.render(row)
-          : String(row[column.key])}
-        </Table.Td>
-      ))}
-    </Table.Tr>
-  ))}
-</Table.Tbody>
-
+        <Table.Tbody>
+          {rankings.map((row) => (
+            <Table.Tr key={row.name}>
+              {visibleColumns.map((column) => (
+                <Table.Td key={column.key}>
+                  {typeof column.render === 'function'
+                    ? column.render(row)
+                    : String(row[column.key])}
+                </Table.Td>
+              ))}
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
       </Table>
     </div>
   );

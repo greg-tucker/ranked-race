@@ -1,5 +1,4 @@
-import { getRankHistory } from '@/app/dataFetcher';
-import { MainRankingsData } from '@/app/dataTypes';
+import { MainRankingsData } from '@/components/dataTypes';
 import { useState, useEffect } from 'react';
 import { LineChart } from '@mantine/charts';
 import { Group, Image, Text, Stack } from '@mantine/core';
@@ -7,7 +6,6 @@ import { Group, Image, Text, Stack } from '@mantine/core';
 import '@mantine/charts/styles.css';
 
 export function Graph() {
-
   const [rankHistory, setRankHistory] = useState<MainRankingsData[]>([]);
 
   useEffect(() => {
@@ -20,9 +18,17 @@ export function Graph() {
   const series = [
     { name: 'mayalover3', color: '#aa80ff', icon: 'static/mayalover3.jpg' },
     { name: 'jigoa', color: '#ff8000', icon: '/static/jigoa.jpg' },
-    { name: 'oystericetea', color: '#ff99ff', icon: '/static/oystericetea.jpg' },
-    { name: 'haudyerwheesht', color: '#8000ff', icon: '/static/haudyerwheesht.jpg' },
-    { name: 'broclee', color: '#3385ff', icon: '/static/broclee.jpg' }
+    {
+      name: 'oystericetea',
+      color: '#ff99ff',
+      icon: '/static/oystericetea.jpg',
+    },
+    {
+      name: 'haudyerwheesht',
+      color: '#8000ff',
+      icon: '/static/haudyerwheesht.jpg',
+    },
+    { name: 'broclee', color: '#3385ff', icon: '/static/broclee.jpg' },
   ];
 
   return (

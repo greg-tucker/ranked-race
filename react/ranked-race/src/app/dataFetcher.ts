@@ -1,10 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
-import { MainRankingsData } from '@/app/dataTypes';
-import { useEffect } from 'react';
+import { MainRankingsData } from '@/components/dataTypes';
 
-export async function getCurrentRanking(
-  setter: Dispatch<MainRankingsData[]>
-) {
+export async function getCurrentRanking(setter: Dispatch<MainRankingsData[]>) {
   const url = `${process.env.NEXT_PUBLIC_RR_BACKEND_URL}rank`;
   try {
     let response = await fetch(url, {

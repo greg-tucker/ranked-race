@@ -1,9 +1,7 @@
 'use client';
 
-import AudioPlayer from '@/components/AudioPlayer';
 import { HeaderMenu } from '@/components/HeaderMenu';
 import { NavTabs } from '@/components/NavTabs';
-import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRef } from 'react';
 

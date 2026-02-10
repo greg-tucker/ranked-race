@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 export type MainRankingsData = {
   name: string;
@@ -19,23 +19,37 @@ export type MainRankingsData = {
 };
 
 export type ColumnKey = keyof MainRankingsData | 'opgg';
-
-
+// @ts-ignore
+const loaderProp = ({ src }) => {
+  return src;
+};
 export const visibleColumns: {
   key: ColumnKey;
   label: string;
   render?: (row: MainRankingsData) => React.ReactNode;
 }[] = [
   { key: 'name', label: 'Name' },
-  { key: 'displayRank', label: 'Rank',
-    render: (row) => { if (row.tier) {
-      return <div>
-      <Image src={`/static/${row.tier}.png`} alt="" width={50} height= {50}/>
-      {row.displayRank}
-      </div>;
+  {
+    key: 'displayRank',
+    label: 'Rank',
+    render: (row) => {
+      if (row.tier) {
+        const source = `/static/${row.tier.toLowerCase()}.png`;
+        return (
+          <div>
+            <Image
+              src={source}
+              alt=""
+              loader={loaderProp}
+              width={50}
+              height={50}
+            />
+            {row.displayRank}
+          </div>
+        );
       }
-     return <div> This loser is unranked </div>
-  }
+      return <div> This loser is unranked </div>;
+    },
   },
   {
     key: 'opgg',
@@ -52,14 +66,14 @@ export const visibleColumns: {
   },
   {
     key: 'winRate',
-    label: 'Win Rate'
+    label: 'Win Rate',
   },
   {
     key: 'wins',
-    label: 'Wins'
+    label: 'Wins',
   },
-    {
+  {
     key: 'losses',
-    label: 'Losses'
+    label: 'Losses',
   },
 ];
