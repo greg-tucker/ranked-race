@@ -192,6 +192,15 @@ var ranksMap = map[string]int{
 	"IV":  0,
 }
 
+func loadPlayerData() []PlayerStats {
+	var playerStatsList []PlayerStats
+	for _, user := range users {
+		playerStats := getPlayerStats(user)
+		playerStatsList = append(playerStatsList, playerStats)
+	}
+	return playerStatsList
+}
+
 func main() {
 
 	var playerStatsList []PlayerStats
@@ -225,7 +234,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 	router.GET("/rank", func(c *gin.Context) {
-		c.JSON(200, playerStatsList)
+		c.JSON(200, loadPlayerData())
 	})
 
 	router.Run() // listens on 0.0.0.0:8080 by default
