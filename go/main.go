@@ -1,36 +1,17 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"math"
-	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"log"
-	"net/http"
 
 	_ "github.com/joho/godotenv/autoload"
 )
-
-type account struct {
-	PUUID    string `json:"puuid"`
-	GameName string `json:"gameName"`
-	TagLine  string `json:"tagLine"`
-}
-
-type rankedEntry struct {
-	QueueType    string `json:"queueType"`
-	Tier         string `json:"tier"`
-	Rank         string `json:"rank"`
-	LeaguePoints int    `json:"leaguePoints"`
-	Wins         int    `json:"wins"`
-	Losses       int    `json:"losses"`
-}
 
 type PlayerStats struct {
 	Name        string  `json:"name"`
@@ -49,22 +30,13 @@ type PlayerStats struct {
 	Tag         string  `json:"tag"`
 }
 
-type InputPlayer struct {
-	Name string
-	Tag  string
-}
-
 func check(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
-func isSoloQueue(entry rankedEntry) bool {
-	return entry.QueueType == "RANKED_SOLO_5x5"
-}
-
-func toPlayerStats(entry rankedEntry, name string, tag string) PlayerStats {
+func toPlayerStats(entry RankedEntry, name string, tag string) PlayerStats {
 	totalGames := entry.Wins + entry.Losses
 	var winrate float64 = 0
 	if totalGames != 0 {
@@ -86,77 +58,47 @@ func toPlayerStats(entry rankedEntry, name string, tag string) PlayerStats {
 	}
 }
 
-func calculateLp(entry rankedEntry) int {
+func calculateLp(entry RankedEntry) int {
 	metalIndex := metals[entry.Tier]
 	return metalIndex*400 + ranksMap[entry.Rank]*100 + entry.LeaguePoints
 }
 
-func getPlayerStats(inputPlayer InputPlayer) PlayerStats {
-	resp, err := http.Get(baseUrl + accountsPath + inputPlayer.Name + "/" + inputPlayer.Tag + apiKeyParam)
-	if err != nil {
-		log.Fatalln(err)
+func filterRankedEntriesForGameType(entries []RankedEntry, queueType string) (entry RankedEntry, found bool) {
+	for i := range entries {
+		if entries[i].QueueType == SOLO_QUEUE {
+			return entries[i], true
+		}
 	}
+	return RankedEntry{}, false
+}
 
-	//We Read the response body on the line below.
-	body, err := io.ReadAll(resp.Body)
+func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
+	acc, err := getAccountFromNameAndTag(inputPlayer)
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	var acc account
-	err = json.Unmarshal(body, &acc)
-	if err != nil {
-		log.Fatalln(err)
+		return PlayerStats{}, false
 	}
 
 	log.Printf("%+v\n", acc)
-
 	log.Printf("PUUID LIT NASTY %s", acc.PUUID)
 
-	resp, err = http.Get(serverBaseUrl + entriesPath + acc.PUUID + apiKeyParam)
-	if err != nil {
-		log.Fatalln(err)
+	rankedEntries, err := getRankedEntriesByAcc(acc)
+
+	soloQueueEntry, found := filterRankedEntriesForGameType(rankedEntries, SOLO_QUEUE)
+
+	if found == false {
+		return PlayerStats{}, false
 	}
 
-	//We Read the response body on the line below.
-	body, err = io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	log.Printf("SOLO QUEUE %+v\n", soloQueueEntry)
 
-	log.Printf("BODY: %s", string(body))
-
-	var rankedEntries []rankedEntry
-	err = json.Unmarshal(body, &rankedEntries)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	log.Printf("%+v\n", rankedEntries)
-
-	soloQueue := rankedEntry{}
-
-	for i := range rankedEntries {
-		if isSoloQueue(rankedEntries[i]) {
-			soloQueue = rankedEntries[i]
-		}
-	}
-
-	log.Printf("SOLO QUEUE %+v\n", soloQueue)
-
-	playerStats := toPlayerStats(soloQueue, acc.GameName, inputPlayer.Tag)
+	playerStats := toPlayerStats(soloQueueEntry, acc.GameName, inputPlayer.Tag)
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
-	return playerStats
+	return playerStats, true
 }
 
-var apiKey = os.Getenv("RIOT_API_KEY")
-var baseUrl = "https://europe.api.riotgames.com/"
-var serverBaseUrl = "https://euw1.api.riotgames.com/"
-var accountsPath = "riot/account/v1/accounts/by-riot-id/"
-var entriesPath = "lol/league/v4/entries/by-puuid/"
-var apiKeyParam = "?api_key=" + apiKey
 var users = []InputPlayer{
 	{Name: "Impala", Tag: "KAZ"},
 	{Name: "Bjerkingfan", Tag: "EUW"},
@@ -192,23 +134,20 @@ var ranksMap = map[string]int{
 	"IV":  0,
 }
 
+var SOLO_QUEUE = "RANKED_SOLO_5x5"
+
 func loadPlayerData() []PlayerStats {
 	var playerStatsList []PlayerStats
 	for _, user := range users {
-		playerStats := getPlayerStats(user)
-		playerStatsList = append(playerStatsList, playerStats)
+		playerStats, found := getPlayerStats(user)
+		if found {
+			playerStatsList = append(playerStatsList, playerStats)
+		}
 	}
 	return playerStatsList
 }
 
 func main() {
-
-	var playerStatsList []PlayerStats
-	for _, user := range users {
-		playerStats := getPlayerStats(user)
-		playerStatsList = append(playerStatsList, playerStats)
-	}
-
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
