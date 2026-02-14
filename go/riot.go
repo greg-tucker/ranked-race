@@ -82,6 +82,7 @@ var riotBaseUrl = "https://europe.api.riotgames.com/"
 var leagueBaseUrl = "https://euw1.api.riotgames.com/"
 var accountsPath = "riot/account/v1/accounts/by-riot-id/"
 var entriesPath = "lol/league/v4/entries/by-puuid/"
+var specatatorPath = "/lol/spectator/v5/active-games/by-summoner/"
 var apiKeyParam = "?api_key=" + apiKey
 
 func callRiot(url string) ([]byte, error) {
@@ -129,4 +130,21 @@ func getRankedEntriesByAcc(acc Account) ([]RankedEntry, error) {
 		return nil, err
 	}
 	return rankedEntries, nil
+}
+
+func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found bool) {
+	body, err := callRiot(specatatorPath + puuid)
+	if err != nil {
+		log.Fatalln(err)
+		return CurrentGameInfo{}, false
+	}
+
+	var currentGameInfo CurrentGameInfo
+	err = json.Unmarshal(body, &currentGameInfo)
+	if err != nil {
+		log.Fatalln(err)
+		return CurrentGameInfo{}, false
+	}
+
+	return currentGameInfo, true
 }

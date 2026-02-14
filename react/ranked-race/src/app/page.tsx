@@ -19,11 +19,11 @@ export default function HomePage() {
       <div>
         <HeaderMenu />
         <main>
-          <h3>Most Epic Ranking!</h3>
-          <NavTabs />
-          {/* <AudioPlayer closeModal={close} audioRef={audioRef.current} text='Toggle music' /> */}
+          <div className="glass" style={{ padding: '2.5rem 2rem', margin: '2rem auto', maxWidth: 1200, boxShadow: '0 4px 32px #0ea5e933' }}>
+            <h3 style={{ textAlign: 'center', fontSize: 28, fontWeight: 600, marginBottom: 24, letterSpacing: 1 }}>Most Epic Ranking!</h3>
+            <NavTabs />
+          </div>
         </main>
-
         <footer>Brought to you by Greg, Zi, Nikki</footer>
       </div>
     </>
