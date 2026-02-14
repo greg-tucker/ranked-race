@@ -133,7 +133,7 @@ func getRankedEntriesByAcc(acc Account) ([]RankedEntry, error) {
 }
 
 func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found bool) {
-	body, err := callRiot(specatatorPath + puuid)
+	body, err := callRiot(leagueBaseUrl + specatatorPath + puuid)
 	if err != nil {
 		log.Fatalln(err)
 		return CurrentGameInfo{}, false
@@ -144,6 +144,12 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 	if err != nil {
 		log.Fatalln(err)
 		return CurrentGameInfo{}, false
+	}
+
+	log.Printf("CURRENT GAME INFO  %+v\n", currentGameInfo)
+
+	if currentGameInfo.GameID == 0 {
+		return currentGameInfo, false
 	}
 
 	return currentGameInfo, true

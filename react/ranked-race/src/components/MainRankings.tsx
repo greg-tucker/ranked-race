@@ -79,7 +79,7 @@ export function MainRankings() {
 
           <Table.Tbody>
             {rankings.map((row) => (
-              <Table.Tr key={row.name}>
+              <Table.Tr key={row.name} className={row.inGame ?  'inGame' : ''}>
                 {visibleColumns.map((column) => (
                   <Table.Td key={column.key}>
                     {typeof column.render === 'function'

@@ -137,6 +137,10 @@ h1, h2, h3 {
   filter: brightness(1.3) drop-shadow(0 0 6px #0ea5e9);
 }
 
+.inGame {
+  background: rgba(208, 255, 0, 0.7);
+}
+
 @media (max-width: 900px) {
   main, .glass {
     padding: 1rem !important;
