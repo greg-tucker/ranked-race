@@ -82,7 +82,7 @@ var riotBaseUrl = "https://europe.api.riotgames.com/"
 var leagueBaseUrl = "https://euw1.api.riotgames.com/"
 var accountsPath = "riot/account/v1/accounts/by-riot-id/"
 var entriesPath = "lol/league/v4/entries/by-puuid/"
-var specatatorPath = "/lol/spectator/v5/active-games/by-summoner/"
+var specatatorPath = "lol/spectator/v5/active-games/by-summoner/"
 var apiKeyParam = "?api_key=" + apiKey
 
 func callRiot(url string) ([]byte, error) {
@@ -145,8 +145,6 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 		log.Fatalln(err)
 		return CurrentGameInfo{}, false
 	}
-
-	log.Printf("CURRENT GAME INFO  %+v\n", currentGameInfo)
 
 	if currentGameInfo.GameID == 0 {
 		return currentGameInfo, false
