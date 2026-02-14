@@ -88,12 +88,12 @@ var apiKeyParam = "?api_key=" + apiKey
 func callRiot(url string) ([]byte, error) {
 	resp, err := http.Get(url + apiKeyParam)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return nil, err
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return nil, err
 	}
 	return body, nil
@@ -103,14 +103,14 @@ func getAccountFromNameAndTag(inputPlayer InputPlayer) (Account, error) {
 	body, err := callRiot(riotBaseUrl + accountsPath + inputPlayer.Name + "/" + inputPlayer.Tag)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return Account{}, err
 	}
 
 	var acc Account
 	err = json.Unmarshal(body, &acc)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return Account{}, err
 	}
 	return acc, nil
@@ -119,14 +119,14 @@ func getAccountFromNameAndTag(inputPlayer InputPlayer) (Account, error) {
 func getRankedEntriesByAcc(acc Account) ([]RankedEntry, error) {
 	body, err := callRiot(leagueBaseUrl + entriesPath + acc.PUUID)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return nil, err
 	}
 
 	var rankedEntries []RankedEntry
 	err = json.Unmarshal(body, &rankedEntries)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return nil, err
 	}
 	return rankedEntries, nil
@@ -135,14 +135,14 @@ func getRankedEntriesByAcc(acc Account) ([]RankedEntry, error) {
 func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found bool) {
 	body, err := callRiot(leagueBaseUrl + specatatorPath + puuid)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return CurrentGameInfo{}, false
 	}
 
 	var currentGameInfo CurrentGameInfo
 	err = json.Unmarshal(body, &currentGameInfo)
 	if err != nil {
-		log.Fatalln(err)
+		log.Print(err)
 		return CurrentGameInfo{}, false
 	}
 
