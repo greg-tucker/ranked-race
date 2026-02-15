@@ -35,3 +35,20 @@ export async function getRankHistory(
     console.error(error);
   }
 }
+
+export async function getGameStats( puuid:string, setter: Dispatch<any>) {
+  const url = `${process.env.NEXT_PUBLIC_RR_BACKEND_URL}activeGame/${puuid}`;
+  try {
+    let response = await fetch(url, {
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    let json = await response.json();
+
+    setter(json);
+  } catch (error) {
+    console.error(error);
+  }
+}
