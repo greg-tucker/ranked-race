@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"net/http"
 	"sync"
 	"time"
 
@@ -222,6 +223,14 @@ func main() {
 		mu.RUnlock()
 		c.JSON(200, data)
 	})
-
+	router.GET("/activeGame/:PUUID", func(c *gin.Context) {
+		PUUID := c.Param("PUUID")
+		game, found := getActiveGamesByPuuid(PUUID)
+		if !found {
+			c.String(http.StatusNotFound, "NO ACTIVE GAME FOR USER")
+		} else {
+			c.JSON(200, game)
+		}
+	})
 	router.Run() // listens on 0.0.0.0:8080 by default
 }
