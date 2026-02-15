@@ -30,6 +30,7 @@ type PlayerStats struct {
 	DisplayRank string  `json:"displayRank"`
 	Tag         string  `json:"tag"`
 	InGame      bool    `json:"inGame"`
+	StartTime   uint64  `json:"startTime"`
 }
 
 func check(e error) {
@@ -99,10 +100,12 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
-	_, found = getActiveGamesByPuuid(acc.PUUID)
+	activeGame, found := getActiveGamesByPuuid(acc.PUUID)
 
 	if found {
 		playerStats.InGame = true
+		playerStats.StartTime = uint64(activeGame.GameStartTime)
+		log.Println(activeGame.GameStartTime)
 	}
 
 	return playerStats, true
