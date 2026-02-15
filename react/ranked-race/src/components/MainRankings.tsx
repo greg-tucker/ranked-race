@@ -99,7 +99,7 @@ export function MainRankings() {
           <Table.Tbody>
             {rankings.map((row) => (
               <React.Fragment key={row.puuid ?? row.name}>
-                <Table.Tr onClick={() => expand(row.puuid)} className={row.inGame ? 'inGame' : ''}>
+                <Table.Tr onClick={() =>{ if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
                   {visibleColumns.map((column) => (
                     <Table.Td key={column.key}>
                       {typeof column.render === 'function' ? column.render(row) : String(row[column.key])}
@@ -107,7 +107,7 @@ export function MainRankings() {
                   ))}
                 </Table.Tr>
 
-                {expandedPuuid === row.puuid && (
+                {expandedPuuid === row.puuid  && row.inGame  && (
                   <Table.Tr>
                     <Table.Td colSpan={visibleColumns.length}>
                       {isLoadingGame ? (
