@@ -130,6 +130,7 @@ var users = []InputPlayer{
 	{Name: "Purple Volvo", Tag: "EUW"},
 	{Name: "soap tastes ok", Tag: "EUW"},
 	{Name: "GediGrandMaster", Tag: "EUW"},
+	{Name: "LR Nemesis", Tag: "LRAT"},
 }
 
 var metals = map[string]int{
