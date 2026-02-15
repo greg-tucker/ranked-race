@@ -1,4 +1,43 @@
 import Image from 'next/image';
+import { GameTimer } from './GameTimer';
+
+export type LiveGamePerks = {
+  perkIds: number[];
+  perkStyle: number;
+  perkSubStyle: number;
+};
+
+export type LiveGameParticipant = {
+  championId: number;
+  perks: LiveGamePerks;
+  profileIconId: number;
+  bot: boolean;
+  teamId: number;
+  summonerName: string;
+  summonerId: string;
+  puuid: string;
+  spell1Id: number;
+  spell2Id: number;
+  gameCustomizationObjects: any[];
+};
+
+export type LiveGameObservers = {
+  encryptionKey: string;
+};
+
+export type LiveGame = {
+  gameId: number;
+  gameType: string;
+  gameStartTime: number;
+  mapId: number;
+  gameLength: number;
+  platformId: string;
+  gameMode: string;
+  bannedChampions: any[];
+  gameQueueConfigId: number;
+  observers: LiveGameObservers;
+  participants: LiveGameParticipant[];
+};
 
 export type MainRankingsData = {
   name: string;
@@ -16,12 +55,14 @@ export type MainRankingsData = {
   winRate: number;
   tag: string;
   opgg: string;
-  inGame: boolean
+  inGame: boolean;
+  startTime?: number;
+  puuid:string;
 };
 
 export type ColumnKey = keyof MainRankingsData | 'opgg';
 // @ts-ignore
-const loaderProp = ({ src }) => {
+export const loaderProp = ({ src }) => {
   return src;
 };
 export const visibleColumns: {
@@ -37,8 +78,9 @@ export const visibleColumns: {
       if (row.tier) {
         const source = `/static/${row.tier.toLowerCase()}.png`;
         return (
-          <div>
+          <div style={{display: 'flex', alignItems: 'center'}}>
             <Image
+              style={{marginRight:'1rem'}}
               src={source}
               alt=""
               loader={loaderProp}
@@ -82,6 +124,11 @@ export const visibleColumns: {
   },
   {
     key: 'played',
-    label: 'Total Games'
+    label: 'Total Games',
+    render: (row) => {
+      return (
+        <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}><span>{row.played}</span> {row.inGame && row.startTime && <GameTimer startTime={row.startTime} />}</div>
+      );
+    }
   }
 ];

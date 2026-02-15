@@ -1,8 +1,10 @@
 'use client';
-import { MainRankingsData, visibleColumns } from '@/components/dataTypes';
-import { useEffect, useState } from 'react';
-import { getCurrentRanking } from '@/app/dataFetcher';
-import { Table } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import { MainRankingsData, visibleColumns, LiveGame, loaderProp } from '@/components/dataTypes';
+import { getCurrentRanking, getGameStats } from '@/app/dataFetcher';
+import { Table, Stack, Group, Badge, Avatar } from '@mantine/core';
+import { GameTimer } from './GameTimer';
+import Image from 'next/image';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -18,6 +20,23 @@ function useIsMobile() {
 export function MainRankings() {
   const [rankings, setRankings] = useState<MainRankingsData[]>([]);
   const isMobile = useIsMobile();
+  const [activeGameData, setActiveGameData] = useState<LiveGame | null>(null);
+  const [expandedPuuid, setExpandedPuuid] = useState<string | null>(null);
+  const [isLoadingGame, setIsLoadingGame] = useState(false);
+
+  function expand(puuid: string) {
+    if (expandedPuuid === puuid) {
+      setExpandedPuuid(null);
+      setActiveGameData(null);
+    } else {
+      setExpandedPuuid(puuid);
+      setIsLoadingGame(true);
+      getGameStats(puuid, (data: LiveGame) => {
+        setActiveGameData(data);
+        setIsLoadingGame(false);
+      });
+    }
+  }
 
   useEffect(() => {
     getCurrentRanking((data) => {
@@ -64,7 +83,7 @@ export function MainRankings() {
 
   return (
     <div className="container">
-      <div className="glass" style={{ padding: '2rem', margin: 'auto', maxWidth: 1100, boxShadow: '0 4px 32px #0ea5e933' }}>
+      <div className="glass" style={{ padding: '2rem', margin: 'auto', maxWidth: 1100, }}>
         <h2 style={{ textAlign: 'center', marginBottom: 32, fontSize: 32, letterSpacing: 1, fontWeight: 700 }}>
           Live League Standings
         </h2>
@@ -79,15 +98,93 @@ export function MainRankings() {
 
           <Table.Tbody>
             {rankings.map((row) => (
-              <Table.Tr key={row.name} className={row.inGame ?  'inGame' : ''}>
-                {visibleColumns.map((column) => (
-                  <Table.Td key={column.key}>
-                    {typeof column.render === 'function'
-                      ? column.render(row)
-                      : String(row[column.key])}
-                  </Table.Td>
-                ))}
-              </Table.Tr>
+              <React.Fragment key={row.puuid ?? row.name}>
+                <Table.Tr onClick={() => expand(row.puuid)} className={row.inGame ? 'inGame' : ''}>
+                  {visibleColumns.map((column) => (
+                    <Table.Td key={column.key}>
+                      {typeof column.render === 'function' ? column.render(row) : String(row[column.key])}
+                    </Table.Td>
+                  ))}
+                </Table.Tr>
+
+                {expandedPuuid === row.puuid && (
+                  <Table.Tr>
+                    <Table.Td colSpan={visibleColumns.length}>
+                      {isLoadingGame ? (
+                        <div style={{ padding: 16, textAlign: 'center' }}>Loading game data...</div>
+                      ) : activeGameData ? (
+                        <Stack gap={16} style={{ padding: 16 }}>
+                          <Group justify="space-between">
+                            <div>
+                              <Badge variant="light">{activeGameData.gameMode}</Badge>
+                              <span style={{ marginLeft: 12 }}>
+                                <GameTimer startTime={activeGameData.gameStartTime} />
+                              </span>
+                            </div>
+                          </Group>
+
+                          <Group grow align="flex-start">
+                            {[100, 200].map((teamId) => (
+                              <Stack key={teamId} gap={8}>
+                                <Badge color={teamId === 100 ? 'blue' : 'red'} style={{ width: 'fit-content' }}>
+                                  Team {teamId === 100 ? 'Blue' : 'Red'}
+                                </Badge>
+                                {activeGameData.participants
+                                  .filter((p) => p.teamId === teamId)
+                                  .map((participant) => (
+                                    <Group
+                                      key={participant.puuid}
+                                      style={{
+                                        padding: 8,
+                                        borderRadius: 6,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                      }}
+                                    >
+                                      <Image
+                                        src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/${participant.championId}.png`}
+                                        alt="champion"
+                                        loader={loaderProp}
+                                        width={32}
+                                        height={32}
+                                        style={{ borderRadius: 4 }}
+                                      />
+                                      <div style={{ flex: 1 }}>
+                                        <div style={{ fontWeight: 500 }}>{participant.summonerName}</div>
+                                        <div style={{ fontSize: 12, color: '#a8b5d8' }}>
+                                          {participant.bot ? 'Bot' : `Level ${participant.profileIconId}`}
+                                        </div>
+                                      </div>
+                                      <Group gap={4}>
+                                        <img
+                                          src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/Summoner${['D', 'F'][participant.spell1Id < participant.spell2Id ? 0 : 1]}.png`}
+                                          alt="spell1"
+                                          width={20}
+                                          height={20}
+                                          style={{ borderRadius: 2 }}
+                                        />
+                                        <img
+                                          src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/Summoner${['D', 'F'][participant.spell1Id < participant.spell2Id ? 1 : 0]}.png`}
+                                          alt="spell2"
+                                          width={20}
+                                          height={20}
+                                          style={{ borderRadius: 2 }}
+                                        />
+                                      </Group>
+                                    </Group>
+                                  ))}
+                              </Stack>
+                            ))}
+                          </Group>
+                        </Stack>
+                      ) : (
+                        <div style={{ padding: 16, textAlign: 'center', color: '#a8b5d8' }}>
+                          No active game data available
+                        </div>
+                      )}
+                    </Table.Td>
+                  </Table.Tr>
+                )}
+              </React.Fragment>
             ))}
           </Table.Tbody>
         </Table>
