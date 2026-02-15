@@ -32,6 +32,7 @@ type PlayerStats struct {
 	Tag         string  `json:"tag"`
 	InGame      bool    `json:"inGame"`
 	StartTime   uint64  `json:"startTime"`
+	PUUID       string  `json:"puuid"`
 }
 
 func check(e error) {
@@ -40,14 +41,15 @@ func check(e error) {
 	}
 }
 
-func toPlayerStats(entry RankedEntry, name string, tag string) PlayerStats {
+func toPlayerStats(entry RankedEntry, acc Account, tag string) PlayerStats {
 	totalGames := entry.Wins + entry.Losses
 	var winrate float64 = 0
 	if totalGames != 0 {
 		winrate = math.Round(10000*float64(entry.Wins)/(float64(entry.Wins+entry.Losses))) / 100
 	}
 	return PlayerStats{
-		Name:        name,
+		Name:        acc.GameName,
+		PUUID:       acc.PUUID,
 		Tier:        entry.Tier,
 		Rank:        entry.Rank,
 		Wins:        entry.Wins,
@@ -97,7 +99,7 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 
 	log.Printf("SOLO QUEUE %+v\n", soloQueueEntry)
 
-	playerStats := toPlayerStats(soloQueueEntry, acc.GameName, inputPlayer.Tag)
+	playerStats := toPlayerStats(soloQueueEntry, acc, inputPlayer.Tag)
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 
