@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"sync"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -143,6 +144,35 @@ var ranksMap = map[string]int{
 }
 
 var SOLO_QUEUE = "RANKED_SOLO_5x5"
+var cachedPlayers []PlayerStats
+var mu sync.RWMutex
+var lastUpdated time.Time
+var cacheTTL = 60 * time.Second
+
+func refreshCache() {
+	log.Println("Refreshing Riot cache...")
+
+	fresh := loadPlayerData()
+
+	mu.Lock()
+	cachedPlayers = fresh
+	mu.Unlock()
+
+	log.Println("Cache refreshed")
+}
+
+func startCacheRefresher(interval time.Duration) {
+	// Initial load
+	refreshCache()
+
+	ticker := time.NewTicker(interval)
+
+	go func() {
+		for range ticker.C {
+			refreshCache()
+		}
+	}()
+}
 
 func loadPlayerData() []PlayerStats {
 	var playerStatsList []PlayerStats
@@ -156,6 +186,8 @@ func loadPlayerData() []PlayerStats {
 }
 
 func main() {
+	startCacheRefresher(3 * time.Minute)
+
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -181,7 +213,10 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 	router.GET("/rank", func(c *gin.Context) {
-		c.JSON(200, loadPlayerData())
+		mu.RLock()
+		data := cachedPlayers
+		mu.RUnlock()
+		c.JSON(200, data)
 	})
 
 	router.Run() // listens on 0.0.0.0:8080 by default
