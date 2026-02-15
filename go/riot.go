@@ -192,8 +192,6 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
 	body, err := callRiot(riotBaseUrl + fmt.Sprintf(matchHistoryPath, puuid))
 
-	fmt.Printf("MatchHisotryBody:\t %v \n", string(body))
-
 	if err != nil {
 		log.Print(err)
 		return nil, false
@@ -204,8 +202,7 @@ func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
 		log.Print(err)
 		return nil, false
 	}
-
-	return matchIds, true
+	return matchIds[:5], true
 }
 
 func getMatchByMatchId(matchId string) (match Match, found bool) {

@@ -120,6 +120,8 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 
 	matchHistory, found := getMatchHistoryByPuuid(acc.PUUID)
 
+	log.Printf("THE ATCHES AFTER SUBSLICE : %+v", matchHistory)
+
 	playerStats.Role = getMostPlayedRole(matchHistory, acc.PUUID)
 
 	return playerStats, true
