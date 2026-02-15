@@ -16,7 +16,8 @@ export type MainRankingsData = {
   winRate: number;
   tag: string;
   opgg: string;
-  inGame: boolean
+  inGame: boolean;
+  role: string;
 };
 
 export type ColumnKey = keyof MainRankingsData | 'opgg';
@@ -30,6 +31,7 @@ export const visibleColumns: {
   render?: (row: MainRankingsData) => React.ReactNode;
 }[] = [
   { key: 'name', label: 'Name' },
+  { key: 'role', label: 'Role'},
   {
     key: 'displayRank',
     label: 'Rank',
