@@ -1,49 +1,210 @@
-html,
-body {
-  margin: 0;
-}
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
-.rr-title {
-  font-size: 20px;
-  color: #C89B3C;
-  font-weight: bold;
+
+html,
+body {
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e6ff;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  min-height: 100vh;
 }
+
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Full viewport height */
-  margin: 0;
+  min-height: 100vh;
 }
 
 header {
-  background: #333;
-  color: white;
-  padding: 1rem;
-  text-align: center;
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 31, 58, 0.95) 100%);
+  border-bottom: 2px solid #0ea5e9;
+  padding: 2rem 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 main {
-  flex-grow: 1; /* This makes content fill the remaining space */
-  padding: 1rem;
+  flex: 1;
+  padding: 2rem 1rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 footer {
-  background: #333;
-  color: white;
-  padding: 1rem;
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 31, 58, 0.95) 100%);
+  border-top: 1px solid #0ea5e9;
+  padding: 1.5rem;
   text-align: center;
+  font-size: 0.9rem;
+  color: #a8b5d8;
+  margin-top: auto;
 }
 
-h1,
-h2,
-h3 {
-  color: #C89B3C;
-  font-weight: bold;
+h1, h2, h3 {
+  color: #0ea5e9;
+  font-weight: 600;
+}
+
+.rr-title {
+  font-size: 28px;
+  color: #0ea5e9;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Mantine Table overrides */
+.mantine-Table-root {
+  background: rgba(20, 28, 60, 0.6);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(14, 165, 233, 0.08);
+}
+
+.mantine-Table-thead {
+  background: rgba(10, 14, 39, 0.8);
+}
+
+.mantine-Table-th {
+  color: #0ea5e9;
+  font-weight: 700;
+  border-color: rgba(14, 165, 233, 0.2);
+  padding: 1.2rem 1rem;
+  font-size: 1.1rem;
+  background: rgba(10, 14, 39, 0.85);
+}
+
+.mantine-Table-td {
+  border-color: rgba(14, 165, 233, 0.1);
+  padding: 1.1rem 1rem;
+  color: #e0e6ff;
+  font-size: 1.05rem;
+  background: rgba(20, 28, 60, 0.5);
+}
+
+.mantine-Table-tr:hover {
+  background: rgba(14, 165, 233, 0.13);
+  transition: background 0.2s;
 }
 
 .mantine-Button-root {
-  background-color: #005A82;
-  color: #C89B3C;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: #0a0e27;
+  font-weight: 600;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.mantine-Button-root:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(14, 165, 233, 0.4);
+}
+
+.green {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.red {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Add a subtle glass effect for cards/tables */
+.glass {
+  background: rgba(20, 28, 60, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  border: 1px solid rgba(14, 165, 233, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+/* Add a little spacing for the main content */
+.container {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* OPGG icon hover effect */
+.opgg-link:hover img {
+  filter: brightness(1.3) drop-shadow(0 0 6px #0ea5e9);
+}
+
+.inGame {
+  background: rgba(208, 255, 0, 0.7);
+}
+
+@media (max-width: 900px) {
+  main, .glass {
+    padding: 1rem !important;
+    max-width: 100vw !important;
+  }
+  .container {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .rr-title {
+    font-size: 20px;
+  }
+  header {
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 1rem !important;
+    min-height: 60px !important;
+  }
+  h2, h3 {
+    font-size: 1.2rem !important;
+    margin-bottom: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .glass {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08);
+    padding: 0.5rem !important;
+  }
+  .mantine-Table-root {
+    font-size: 0.95rem;
+    border-radius: 6px;
+  }
+  .mantine-Table-th, .mantine-Table-td {
+    padding: 0.5rem 0.3rem !important;
+    font-size: 0.95rem !important;
+  }
+  .mantine-Table-th {
+    font-size: 1rem !important;
+  }
+  .rr-title {
+    font-size: 16px !important;
+    letter-spacing: 1px;
+  }
+  header {
+    padding: 0.5rem !important;
+    min-height: 40px !important;
+  }
+  footer {
+    font-size: 0.8rem !important;
+    padding: 0.7rem !important;
+  }
+}
+
+/* Make table horizontally scrollable on small screens */
+@media (max-width: 900px) {
+  .glass {
+    overflow-x: auto;
+  }
+  .mantine-Table-root {
+    min-width: 600px;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
 }

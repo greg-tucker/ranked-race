@@ -3,17 +3,20 @@ import mapImage from '../../public/static/img.png';
 
 export function HeaderMenu() {
   return (
-    <header
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Image width={50} height={50} alt="map icon" src={mapImage} />
-      <div style={{ marginLeft: 10 }} className="rr-title">
-        Welcome to Ranked Race
+    <header style={{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 24,
+      minHeight: 80,
+    }}>
+      <Image width={60} height={60} alt="Ranked Race Logo" src={mapImage} style={{ borderRadius: 12, boxShadow: '0 2px 12px #0ea5e9' }} />
+      <div>
+        <div className="rr-title">Ranked Race</div>
+        <div style={{ color: '#a8b5d8', fontSize: 18, fontWeight: 400, marginTop: 2, letterSpacing: 1 }}>
+          The Ultimate League LP Tracker
+        </div>
       </div>
     </header>
   );
