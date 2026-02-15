@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -33,6 +34,7 @@ type PlayerStats struct {
 	InGame      bool    `json:"inGame"`
 	StartTime   uint64  `json:"startTime"`
 	PUUID       string  `json:"puuid"`
+	Role        string  `json:"role"`
 }
 
 func check(e error) {
@@ -63,6 +65,11 @@ func toPlayerStats(entry RankedEntry, acc Account, tag string) PlayerStats {
 		Tag:         tag,
 		InGame:      false,
 	}
+}
+
+type RoleCount struct {
+	Role  string
+	Count int
 }
 
 func calculateLp(entry RankedEntry) int {
@@ -111,7 +118,45 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 		log.Println(activeGame.GameStartTime)
 	}
 
+	matchHistory, found := getMatchHistoryByPuuid(acc.PUUID)
+
+	playerStats.Role = getMostPlayedRole(matchHistory, acc.PUUID)
+
 	return playerStats, true
+}
+
+func getMostPlayedRole(matchHistoryIds []string, puuid string) (role string) {
+	rolesMap := make(map[string]int)
+
+	for _, matchId := range matchHistoryIds {
+		match, found := getMatchByMatchId(matchId)
+
+		if !found {
+			return ""
+		}
+		for _, player := range match.Info.Participants {
+			if player.PUUID == puuid {
+				rolesMap[player.TeamPosition]++
+			}
+		}
+	}
+
+	var roleCounts []RoleCount
+	for role, count := range rolesMap {
+		roleCounts = append(roleCounts, RoleCount{role, count})
+	}
+
+	sort.Slice(roleCounts, func(i, j int) bool {
+		return roleCounts[i].Count > roleCounts[j].Count
+	})
+
+	log.Printf("ROLES PLAYED: %+v", roleCounts)
+
+	if len(roleCounts) > 0 {
+		return roleCounts[0].Role
+	}
+	log.Printf("NO ROLES? %+v %+v", roleCounts, rolesMap)
+	return ""
 }
 
 var users = []InputPlayer{

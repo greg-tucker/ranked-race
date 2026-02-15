@@ -2,10 +2,16 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
+
+	"context"
+
+	"golang.org/x/time/rate"
 )
 
 type Account struct {
@@ -72,10 +78,26 @@ type BannedChampion struct {
 	TeamID     int64 `json:"teamId"`
 }
 
+type Match struct {
+	Info MatchInfo `json:"info"`
+}
+
+type MatchInfo struct {
+	Participants []Participants `json:"participants"`
+}
+
+type Participants struct {
+	TeamPosition string `json:"teamPosition"`
+	PUUID        string `json:"puuid"`
+}
+
 type InputPlayer struct {
 	Name string
 	Tag  string
 }
+
+var shortLimiter = rate.NewLimiter(20, 20)
+var longLimiter = rate.NewLimiter(rate.Every(time.Minute/50), 50)
 
 var apiKey = os.Getenv("RIOT_API_KEY")
 var riotBaseUrl = "https://europe.api.riotgames.com/"
@@ -83,9 +105,23 @@ var leagueBaseUrl = "https://euw1.api.riotgames.com/"
 var accountsPath = "riot/account/v1/accounts/by-riot-id/"
 var entriesPath = "lol/league/v4/entries/by-puuid/"
 var specatatorPath = "lol/spectator/v5/active-games/by-summoner/"
+var matchHistoryPath = "lol/match/v5/matches/by-puuid/%s/ids"
+var matchPath = "lol/match/v5/matches/%s"
 var apiKeyParam = "?api_key=" + apiKey
 
 func callRiot(url string) ([]byte, error) {
+	err := shortLimiter.Wait(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = longLimiter.Wait(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
 	resp, err := http.Get(url + apiKeyParam)
 	if err != nil {
 		log.Print(err)
@@ -151,4 +187,39 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 	}
 
 	return currentGameInfo, true
+}
+
+func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
+	body, err := callRiot(riotBaseUrl + fmt.Sprintf(matchHistoryPath, puuid))
+
+	fmt.Printf("MatchHisotryBody:\t %v \n", string(body))
+
+	if err != nil {
+		log.Print(err)
+		return nil, false
+	}
+
+	err = json.Unmarshal(body, &matchIds)
+	if err != nil {
+		log.Print(err)
+		return nil, false
+	}
+
+	return matchIds, true
+}
+
+func getMatchByMatchId(matchId string) (match Match, found bool) {
+	body, err := callRiot(riotBaseUrl + fmt.Sprintf(matchPath, matchId))
+	if err != nil {
+		log.Print(err)
+		return Match{}, false
+	}
+
+	err = json.Unmarshal(body, &match)
+	if err != nil {
+		log.Print(err)
+		return Match{}, false
+	}
+
+	return match, true
 }

@@ -56,6 +56,7 @@ export type MainRankingsData = {
   tag: string;
   opgg: string;
   inGame: boolean;
+  role: string;
   startTime?: number;
   puuid:string;
 };
@@ -71,6 +72,7 @@ export const visibleColumns: {
   render?: (row: MainRankingsData) => React.ReactNode;
 }[] = [
   { key: 'name', label: 'Name' },
+  { key: 'role', label: 'Role'},
   {
     key: 'displayRank',
     label: 'Rank',
