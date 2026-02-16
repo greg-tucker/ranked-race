@@ -141,7 +141,7 @@ export function MainRankings() {
                                       }}
                                     >
                                       <Image
-                                        src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/${participant.championId}.png`}
+                                        src={`https://lolcdn.darkintaqt.com/cdn/champion/${participant.championId}/tile`}
                                         alt="champion"
                                         loader={loaderProp}
                                         width={32}

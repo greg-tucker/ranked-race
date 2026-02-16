@@ -72,7 +72,12 @@ export const visibleColumns: {
   render?: (row: MainRankingsData) => React.ReactNode;
 }[] = [
   { key: 'name', label: 'Name' },
-  { key: 'role', label: 'Role'},
+  { key:
+     'role',
+      label: 'Role',
+    render: (row) => {  
+      return <Image src={`/static/${row.role.toLowerCase()}_icon.webp`} loader={loaderProp} alt={row.role} width={32} height={32} style={{ borderRadius: 6 }} />
+  }},
   {
     key: 'displayRank',
     label: 'Rank',
