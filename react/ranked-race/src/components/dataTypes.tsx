@@ -76,7 +76,8 @@ export const visibleColumns: {
      'role',
       label: 'Role',
     render: (row) => {  
-      return <Image src={`/static/${row.role.toLowerCase()}_icon.webp`} loader={loaderProp} alt={row.role} width={32} height={32} style={{ borderRadius: 6 }} />
+      const source = `/static/${row.role.toLowerCase()}_icon.webp`;
+      return <Image src={source} loader={loaderProp} alt={row.role} width={32} height={32} style={{ borderRadius: 6 }} />
   }},
   {
     key: 'displayRank',
