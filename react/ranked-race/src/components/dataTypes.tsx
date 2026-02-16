@@ -76,7 +76,8 @@ export const visibleColumns: {
      'role',
       label: 'Role',
     render: (row) => {  
-      const source = `/static/${row.role.toLowerCase()}_icon.webp`;
+      if (!row.role) return <div>Unknown</div>;
+      const source = `/static/${row.role.toLowerCase()}_icon.png`;
       return <Image src={source} loader={loaderProp} alt={row.role} width={32} height={32} style={{ borderRadius: 6 }} />
   }},
   {
