@@ -209,7 +209,7 @@ func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
 		return nil, false
 	}
 	if len(matchIds) < amountOfGamesToLoad {
-		return matchIds[:len(matchIds)], true
+		return matchId, true
 	}
 	return matchIds[:amountOfGamesToLoad], true
 }
