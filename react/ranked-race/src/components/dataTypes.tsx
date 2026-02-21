@@ -13,7 +13,7 @@ export type LiveGameParticipant = {
   profileIconId: number;
   bot: boolean;
   teamId: number;
-  summonerName: string;
+  riotId: string;
   summonerId: string;
   puuid: string;
   spell1Id: number;

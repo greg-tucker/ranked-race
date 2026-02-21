@@ -149,7 +149,7 @@ export function MainRankings() {
                                         style={{ borderRadius: 4 }}
                                       />
                                       <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: 500 }}>{participant.summonerName}</div>
+                                        <div style={{ fontWeight: 500 }}>{participant.riotId}</div>
                                         <div style={{ fontSize: 12, color: '#a8b5d8' }}>
                                           {participant.bot ? 'Bot' : `Level ${participant.profileIconId}`}
                                         </div>
