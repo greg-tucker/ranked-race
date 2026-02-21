@@ -133,7 +133,7 @@ useEffect(() => {
           <Table.Thead>
             <Table.Tr>
               {visibleColumns.map((column) => (
-                <Table.Th onClick={() => handleSort(column.key)} key={column.key}>{column.label}</Table.Th>
+                <Table.Th onClick={() => handleSort(column.key)} key={column.key}>{column.label} {ascending ? "v" : "^"}</Table.Th>
               ))}
             </Table.Tr>
           </Table.Thead>
@@ -158,7 +158,7 @@ useEffect(() => {
                         <Stack gap={16} style={{ padding: 16 }}>
                           <Group justify="space-between">
                             <div>
-                              <Badge variant="light">{activeGameData.gameMode}</Badge>
+                              <Badge variant="light">{activeGameData.gameQueueConfigId}</Badge>
                               <span style={{ marginLeft: 12 }}>
                                 <GameTimer startTime={activeGameData.gameStartTime} />
                               </span>
@@ -192,11 +192,11 @@ useEffect(() => {
                                       />
                                       <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: 500 }}>{participant.riotId}</div>
-                                        <div style={{ fontSize: 12, color: '#a8b5d8' }}>
+                                        {/* <div style={{ fontSize: 12, color: '#a8b5d8' }}>
                                           {participant.bot ? 'Bot' : `Level ${participant.profileIconId}`}
-                                        </div>
+                                        </div> */}
                                       </div>
-                                      <Group gap={4}>
+                                      {/* <Group gap={4}>
                                         <img
                                           src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/Summoner${['D', 'F'][participant.spell1Id < participant.spell2Id ? 0 : 1]}.png`}
                                           alt="spell1"
@@ -211,7 +211,7 @@ useEffect(() => {
                                           height={20}
                                           style={{ borderRadius: 2 }}
                                         />
-                                      </Group>
+                                      </Group> */}
                                     </Group>
                                   ))}
                               </Stack>

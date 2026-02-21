@@ -15,6 +15,7 @@ export type LiveGameParticipant = {
   teamId: number;
   riotId: string;
   summonerId: string;
+  gameQueueConfigId: number;
   puuid: string;
   spell1Id: number;
   spell2Id: number;
