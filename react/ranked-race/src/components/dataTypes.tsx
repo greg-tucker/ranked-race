@@ -125,11 +125,12 @@ export const visibleColumns: {
   },
   {
     key: 'wins',
-    label: 'Wins',
-  },
-  {
-    key: 'losses',
-    label: 'Losses',
+    label: 'W/L',
+    render: (row) => {
+      return (
+        <div><span className='green'>{row.wins}</span>/<span className='red'>{row.losses}</span></div>
+      )
+    }
   },
   {
     key: 'played',
