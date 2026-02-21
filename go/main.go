@@ -153,7 +153,7 @@ var users = []InputPlayer{
 	{Name: "Pissinglnthewind", Tag: "EUW", Image: "obe.png"},
 	{Name: "mayalover3", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "SnazzyG", Tag: "EUW", Image: "ali.jpg"},
-	{Name: "crochecha", Tag: "EUW", Image: "joe.jpg"},
+	{Name: "crochecha", Tag: "EUW", Image: "joe1.jpg"},
 	{Name: "jigoa", Tag: "XDD", Image: "jigoa.jpg"},
 	{Name: "nisenna", Tag: "EUW", Image: "nichy.jpg"},
 	{Name: "OneLargeBoi", Tag: "EUW", Image: "duncan.jpg"},
