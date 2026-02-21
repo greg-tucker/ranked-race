@@ -60,6 +60,7 @@ export type MainRankingsData = {
   role: string;
   startTime?: number;
   puuid:string;
+  image: string;
 };
 
 export type ColumnKey = keyof MainRankingsData | 'opgg';
@@ -72,7 +73,15 @@ export const visibleColumns: {
   label: string;
   render?: (row: MainRankingsData) => React.ReactNode;
 }[] = [
-  { key: 'name', label: 'Name' },
+  { key: 'name', label: 'Name',
+    render: (row) => {
+          const source = `/static/${row.image.toLowerCase()}`;
+      return <div style={{display: 'flex', alignItems: 'center'}}>
+        <Image style={{marginRight:'1rem'}} src={source} loader={loaderProp} alt="" width={64} height={64}></Image>
+        {row.name}
+      </div>
+    }
+   },
   { key:
      'role',
       label: 'Role',

@@ -35,6 +35,7 @@ type PlayerStats struct {
 	StartTime   uint64  `json:"startTime"`
 	PUUID       string  `json:"puuid"`
 	Role        string  `json:"role"`
+	Image       string  `json:"image"`
 }
 
 func check(e error) {
@@ -43,7 +44,7 @@ func check(e error) {
 	}
 }
 
-func toPlayerStats(entry RankedEntry, acc Account, tag string) PlayerStats {
+func toPlayerStats(entry RankedEntry, acc Account, tag string, image string) PlayerStats {
 	totalGames := entry.Wins + entry.Losses
 	var winrate float64 = 0
 	if totalGames != 0 {
@@ -64,6 +65,7 @@ func toPlayerStats(entry RankedEntry, acc Account, tag string) PlayerStats {
 		DisplayRank: entry.Tier + " " + entry.Rank + " " + fmt.Sprint(entry.LeaguePoints) + " LP",
 		Tag:         tag,
 		InGame:      false,
+		Image:       image,
 	}
 }
 
@@ -102,7 +104,7 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 
 	log.Printf("SOLO QUEUE %+v\n", soloQueueEntry)
 
-	playerStats := toPlayerStats(soloQueueEntry, acc, inputPlayer.Tag)
+	playerStats := toPlayerStats(soloQueueEntry, acc, inputPlayer.Tag, inputPlayer.Image)
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
 	return playerStats, true
@@ -143,24 +145,24 @@ func getMostPlayedRole(matchHistoryIds []string, puuid string) (role string) {
 }
 
 var users = []InputPlayer{
-	{Name: "Impala", Tag: "KAZ"},
-	{Name: "Bjerkingfan", Tag: "EUW"},
-	{Name: "HaudYerWheesht", Tag: "EUW"},
-	{Name: "ctrl alt cute", Tag: "xoxo"},
-	{Name: "oystericetea", Tag: "EUW"},
-	{Name: "Pissinglnthewind", Tag: "EUW"},
-	{Name: "mayalover3", Tag: "EUW"},
-	{Name: "SnazzyG", Tag: "EUW"},
-	{Name: "crochecha", Tag: "EUW"},
-	{Name: "jigoa", Tag: "XDD"},
-	{Name: "nisenna", Tag: "EUW"},
-	{Name: "OneLargeBoi", Tag: "EUW"},
-	{Name: "gemgeffery", Tag: "EUW"},
-	{Name: "Purple Volvo", Tag: "EUW"},
-	{Name: "soap tastes ok", Tag: "EUW"},
-	{Name: "GediGrandMaster", Tag: "EUW"},
-	{Name: "Yellow Lada", Tag: "EUW"},
-	{Name: "JGeddes", Tag: "EUW"},
+	{Name: "Impala", Tag: "KAZ", Image: "mayalover3.jpg"},
+	{Name: "Bjerkingfan", Tag: "EUW", Image: "haudyerwheesht.jpg"},
+	{Name: "HaudYerWheesht", Tag: "EUW", Image: "haudyerwheesht.jpg"},
+	{Name: "ctrl alt cute", Tag: "xoxo", Image: "oystericetea.jpg"},
+	{Name: "oystericetea", Tag: "EUW", Image: "oystericetea.jpg"},
+	{Name: "Pissinglnthewind", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "mayalover3", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "SnazzyG", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "crochecha", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "jigoa", Tag: "XDD", Image: "jigoa.jpg"},
+	{Name: "nisenna", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "OneLargeBoi", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "gemgeffery", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "Purple Volvo", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "soap tastes ok", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "GediGrandMaster", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "Yellow Lada", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "JGeddes", Tag: "EUW", Image: "mayalover3.jpg"},
 }
 
 var metals = map[string]int{

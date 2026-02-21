@@ -92,8 +92,9 @@ type Participants struct {
 }
 
 type InputPlayer struct {
-	Name string
-	Tag  string
+	Name  string
+	Tag   string
+	Image string
 }
 
 var shortLimiter = rate.NewLimiter(20, 20)
@@ -194,7 +195,7 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 }
 
 func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
-	amountOfGamesToLoad := 5
+	amountOfGamesToLoad := 1
 	body, err := callRiotWithQueryParams(riotBaseUrl+fmt.Sprintf(matchHistoryPath, puuid), "&queue=420")
 
 	if err != nil {
