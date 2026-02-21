@@ -155,13 +155,13 @@ var users = []InputPlayer{
 	{Name: "SnazzyG", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "crochecha", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "jigoa", Tag: "XDD", Image: "jigoa.jpg"},
-	{Name: "nisenna", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "nisenna", Tag: "EUW", Image: "nichy.jpg"},
 	{Name: "OneLargeBoi", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "gemgeffery", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "Purple Volvo", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "soap tastes ok", Tag: "EUW", Image: "mayalover3.jpg"},
 	{Name: "GediGrandMaster", Tag: "EUW", Image: "mayalover3.jpg"},
-	{Name: "Yellow Lada", Tag: "EUW", Image: "mayalover3.jpg"},
+	{Name: "Yellow Lada", Tag: "EUW", Image: "nichy.jpg"},
 	{Name: "JGeddes", Tag: "EUW", Image: "mayalover3.jpg"},
 }
 
