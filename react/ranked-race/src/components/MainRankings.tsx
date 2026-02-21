@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { MainRankingsData, visibleColumns, LiveGame, loaderProp } from '@/components/dataTypes';
+import { MainRankingsData, visibleColumns, LiveGame, loaderProp, ColumnKey } from '@/components/dataTypes';
 import { getCurrentRanking, getGameStats } from '@/app/dataFetcher';
 import { Table, Stack, Group, Badge, Avatar } from '@mantine/core';
 import { GameTimer } from './GameTimer';
@@ -19,11 +19,13 @@ function useIsMobile() {
 
 export function MainRankings() {
   const [rankings, setRankings] = useState<MainRankingsData[]>([]);
+  const [sortedRankings, setSortedRankings] = useState<MainRankingsData[]>([]);
   const isMobile = useIsMobile();
   const [activeGameData, setActiveGameData] = useState<LiveGame | null>(null);
   const [expandedPuuid, setExpandedPuuid] = useState<string | null>(null);
   const [isLoadingGame, setIsLoadingGame] = useState(false);
-
+  const [sorting, setSorting] = useState<ColumnKey>("current");
+  const [ascending, setAscending] = useState(false);
   function expand(puuid: string) {
     if (expandedPuuid === puuid) {
       setExpandedPuuid(null);
@@ -53,6 +55,37 @@ useEffect(() => {
 
   return () => clearInterval(interval); // cleanup on unmount
 }, []);
+
+useEffect(() => {
+  const sorted = [...rankings].sort((a, b) => {
+    // skip special column
+    if (sorting === "opgg") return 0;
+
+    const aValue = a[sorting];
+    const bValue = b[sorting];
+
+    const order = ascending ? 1 : -1;
+
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return (aValue - bValue) * order;
+    }
+
+    return String(aValue).localeCompare(String(bValue)) * order;
+  });
+
+  setSortedRankings(sorted);
+}, [rankings, sorting, ascending]);
+
+
+  const handleSort = (column: ColumnKey) => {
+    console.log("sorting")
+  if (sorting === column) {
+    setAscending(prev => !prev);
+  } else {
+    setSorting(column);
+    setAscending(true);
+  }
+};
 
   if (isMobile) {
     return (
@@ -100,13 +133,13 @@ useEffect(() => {
           <Table.Thead>
             <Table.Tr>
               {visibleColumns.map((column) => (
-                <Table.Th key={column.key}>{column.label}</Table.Th>
+                <Table.Th onClick={() => handleSort(column.key)} key={column.key}>{column.label}</Table.Th>
               ))}
             </Table.Tr>
           </Table.Thead>
 
           <Table.Tbody>
-            {rankings.map((row) => (
+            {sortedRankings.map((row) => (
               <React.Fragment key={row.puuid ?? row.name}>
                 <Table.Tr onClick={() =>{ if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
                   {visibleColumns.map((column) => (
