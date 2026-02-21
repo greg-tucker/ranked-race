@@ -110,6 +110,10 @@ var matchPath = "lol/match/v5/matches/%s"
 var apiKeyParam = "?api_key=" + apiKey
 
 func callRiot(url string) ([]byte, error) {
+	return callRiotWithQueryParams(url, "")
+}
+
+func callRiotWithQueryParams(url string, queryParams string) ([]byte, error) {
 	err := shortLimiter.Wait(context.Background())
 
 	if err != nil {
@@ -122,7 +126,7 @@ func callRiot(url string) ([]byte, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(url + apiKeyParam)
+	resp, err := http.Get(url + apiKeyParam + queryParams)
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -190,7 +194,8 @@ func getActiveGamesByPuuid(puuid string) (currentGame CurrentGameInfo, found boo
 }
 
 func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
-	body, err := callRiot(riotBaseUrl + fmt.Sprintf(matchHistoryPath, puuid))
+	amountOfGamesToLoad := 5
+	body, err := callRiotWithQueryParams(riotBaseUrl+fmt.Sprintf(matchHistoryPath, puuid), "&queue=420")
 
 	if err != nil {
 		log.Print(err)
@@ -202,7 +207,10 @@ func getMatchHistoryByPuuid(puuid string) (matchIds []string, found bool) {
 		log.Print(err)
 		return nil, false
 	}
-	return matchIds[:5], true
+	if len(matchIds) < amountOfGamesToLoad {
+		return matchIds[:len(matchIds)], true
+	}
+	return matchIds[:amountOfGamesToLoad], true
 }
 
 func getMatchByMatchId(matchId string) (match Match, found bool) {

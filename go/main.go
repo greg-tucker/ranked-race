@@ -79,7 +79,7 @@ func calculateLp(entry RankedEntry) int {
 
 func filterRankedEntriesForGameType(entries []RankedEntry, queueType string) (entry RankedEntry, found bool) {
 	for i := range entries {
-		if entries[i].QueueType == SOLO_QUEUE {
+		if entries[i].QueueType == queueType {
 			return entries[i], true
 		}
 	}
@@ -100,30 +100,11 @@ func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 
 	soloQueueEntry, found := filterRankedEntriesForGameType(rankedEntries, SOLO_QUEUE)
 
-	if found == false {
-		return PlayerStats{}, false
-	}
-
 	log.Printf("SOLO QUEUE %+v\n", soloQueueEntry)
 
 	playerStats := toPlayerStats(soloQueueEntry, acc, inputPlayer.Tag)
 
 	log.Printf("PLAYERSTATS %+v\n", playerStats)
-
-	activeGame, found := getActiveGamesByPuuid(acc.PUUID)
-
-	if found {
-		playerStats.InGame = true
-		playerStats.StartTime = uint64(activeGame.GameStartTime)
-		log.Println(activeGame.GameStartTime)
-	}
-
-	matchHistory, found := getMatchHistoryByPuuid(acc.PUUID)
-
-	log.Printf("THE ATCHES AFTER SUBSLICE : %+v", matchHistory)
-
-	playerStats.Role = getMostPlayedRole(matchHistory, acc.PUUID)
-
 	return playerStats, true
 }
 
@@ -164,6 +145,7 @@ func getMostPlayedRole(matchHistoryIds []string, puuid string) (role string) {
 var users = []InputPlayer{
 	{Name: "Impala", Tag: "KAZ"},
 	{Name: "Bjerkingfan", Tag: "EUW"},
+	{Name: "HaudYerWheesht", Tag: "EUW"},
 	{Name: "ctrl alt cute", Tag: "xoxo"},
 	{Name: "oystericetea", Tag: "EUW"},
 	{Name: "Pissinglnthewind", Tag: "EUW"},
@@ -201,33 +183,86 @@ var ranksMap = map[string]int{
 
 var SOLO_QUEUE = "RANKED_SOLO_5x5"
 var cachedPlayers []PlayerStats
-var mu sync.RWMutex
+var cachedActiveGames map[string]CurrentGameInfo
+var cachedRoles map[string]string
+var playerMu sync.RWMutex
+var activeGamesMu sync.RWMutex
+var rolesMu sync.RWMutex
 var lastUpdated time.Time
-var cacheTTL = 60 * time.Second
 
-func refreshCache() {
-	log.Println("Refreshing Riot cache...")
-
-	fresh := loadPlayerData()
-
-	mu.Lock()
-	cachedPlayers = fresh
-	mu.Unlock()
-
-	log.Println("Cache refreshed")
-}
-
-func startCacheRefresher(interval time.Duration) {
+func startPlayerCacheRefresher(interval time.Duration) {
 	// Initial load
-	refreshCache()
+	refreshPlayersCache()
 
 	ticker := time.NewTicker(interval)
 
 	go func() {
 		for range ticker.C {
-			refreshCache()
+			refreshPlayersCache()
 		}
 	}()
+}
+
+func refreshPlayersCache() {
+	log.Println("Refreshing players cache...")
+
+	fresh := loadPlayerData()
+
+	playerMu.Lock()
+	cachedPlayers = fresh
+	playerMu.Unlock()
+
+	log.Println("Player Cache refreshed")
+}
+
+func startActiveGamesCacheRefresher(interval time.Duration) {
+	// Initial load
+	refreshActiveGamesCache()
+
+	ticker := time.NewTicker(interval)
+
+	go func() {
+		for range ticker.C {
+			refreshActiveGamesCache()
+		}
+	}()
+}
+
+func refreshActiveGamesCache() {
+	log.Println("Refreshing active games cache...")
+
+	fresh := loadActiveGamesData()
+
+	activeGamesMu.Lock()
+	cachedActiveGames = fresh
+	activeGamesMu.Unlock()
+
+	log.Println("Active Games Cache refreshed")
+}
+
+func startRolesCacheRefresher(interval time.Duration) {
+	// Initial load
+	refreshRolesCache()
+
+	ticker := time.NewTicker(interval)
+
+	go func() {
+		for range ticker.C {
+			refreshRolesCache()
+		}
+	}()
+}
+
+func refreshRolesCache() {
+	log.Println("Refreshing roles cache...")
+
+	fresh := loadRolesData()
+
+	rolesMu.Lock()
+	cachedRoles = fresh
+	rolesMu.Unlock()
+
+	log.Println("Roles Cache refreshed")
 }
 
 func loadPlayerData() []PlayerStats {
@@ -241,8 +276,64 @@ func loadPlayerData() []PlayerStats {
 	return playerStatsList
 }
 
+func getPuuidsFromCachedPlayers() []string {
+	var puuids []string
+	playerMu.RLock()
+	for _, player := range cachedPlayers {
+		puuids = append(puuids, player.PUUID)
+	}
+	playerMu.RUnlock()
+	return puuids
+}
+
+func loadActiveGamesData() map[string]CurrentGameInfo {
+	puuids := getPuuidsFromCachedPlayers()
+	activeGamesMap := make(map[string]CurrentGameInfo, len(puuids))
+	for _, puuid := range puuids {
+		matches, found := getActiveGamesByPuuid(puuid)
+		if found {
+			activeGamesMap[puuid] = matches
+		}
+	}
+	return activeGamesMap
+}
+
+func loadRolesData() map[string]string {
+	puuids := getPuuidsFromCachedPlayers()
+	rolesMap := make(map[string]string, len(puuids))
+	for _, puuid := range puuids {
+		matches, found := getMatchHistoryByPuuid(puuid)
+		if found {
+			rolesMap[puuid] = getMostPlayedRole(matches, puuid)
+		}
+	}
+	return rolesMap
+}
+
+func combineCachesForRankEndpoint() []PlayerStats {
+	playerMu.RLock()
+	activeGamesMu.RLock()
+	rolesMu.RLock()
+	defer playerMu.RUnlock()
+	defer activeGamesMu.RUnlock()
+	defer rolesMu.RUnlock()
+	var combinedPlayers []PlayerStats
+	for _, player := range cachedPlayers {
+		player.Role = cachedRoles[player.PUUID]
+		activeGame, ok := cachedActiveGames[player.PUUID]
+		if ok {
+			player.InGame = true
+			player.StartTime = uint64(activeGame.GameStartTime)
+		}
+		combinedPlayers = append(combinedPlayers, player)
+	}
+	return combinedPlayers
+}
+
 func main() {
-	startCacheRefresher(3 * time.Minute)
+	startPlayerCacheRefresher(3 * time.Minute)
+	startActiveGamesCacheRefresher(30 * time.Second)
+	startRolesCacheRefresher(30 * time.Minute)
 
 	router := gin.Default()
 
@@ -269,18 +360,17 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 	router.GET("/rank", func(c *gin.Context) {
-		mu.RLock()
-		data := cachedPlayers
-		mu.RUnlock()
-		c.JSON(200, data)
+		c.JSON(200, combineCachesForRankEndpoint())
 	})
 	router.GET("/activeGame/:PUUID", func(c *gin.Context) {
 		PUUID := c.Param("PUUID")
-		game, found := getActiveGamesByPuuid(PUUID)
-		if !found {
+		activeGamesMu.RLock()
+		activeGame, ok := cachedActiveGames[PUUID]
+		activeGamesMu.RUnlock()
+		if !ok {
 			c.String(http.StatusNotFound, "NO ACTIVE GAME FOR USER")
 		} else {
-			c.JSON(200, game)
+			c.JSON(200, activeGame)
 		}
 	})
 	router.Run() // listens on 0.0.0.0:8080 by default

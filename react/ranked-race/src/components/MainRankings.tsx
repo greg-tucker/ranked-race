@@ -38,12 +38,21 @@ export function MainRankings() {
     }
   }
 
-  useEffect(() => {
+  
+useEffect(() => {
+  const fetchData = () => {
     getCurrentRanking((data) => {
       const sortedData = [...data].sort((a, b) => b.current - a.current);
       setRankings(sortedData);
     });
-  }, []);
+  };
+
+  fetchData(); // initial load
+
+  const interval = setInterval(fetchData, 30000);
+
+  return () => clearInterval(interval); // cleanup on unmount
+}, []);
 
   if (isMobile) {
     return (
