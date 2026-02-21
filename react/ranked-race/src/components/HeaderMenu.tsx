@@ -15,7 +15,7 @@ export function HeaderMenu() {
       <div>
         <div className="rr-title">Ranked Race</div>
         <div style={{ color: '#a8b5d8', fontSize: 18, fontWeight: 400, marginTop: 2, letterSpacing: 1 }}>
-          你好 你要回我的家
+          你好 你要回我的家吗
         </div>
       </div>
     </header>
