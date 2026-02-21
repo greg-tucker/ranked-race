@@ -87,23 +87,41 @@ useEffect(() => {
   }
 };
 
-  if (isMobile) {
-    return (
-      <div className="container">
-        <h2 style={{ textAlign: 'center', marginBottom: 24, fontSize: 28, letterSpacing: 1, fontWeight: 700 }}>
-          Live League Standings
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {rankings.map((row) => (
-            <div key={row.name} className="glass" style={{ padding: 16, borderRadius: 12, boxShadow: '0 2px 12px #0ea5e933' }}>
+if (isMobile) {
+  return (
+    <div className="container">
+      <h2 style={{ textAlign: 'center', marginBottom: 24, fontSize: 28, letterSpacing: 1, fontWeight: 700 }}>
+        Live League Standings
+      </h2>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {sortedRankings.map((row) => (
+          <div key={row.puuid ?? row.name}>
+
+            {/* Player card */}
+            <div
+              className={`glass ${row.inGame ? 'inGame' : ''}`}
+              style={{ padding: 16, borderRadius: 12, boxShadow: '0 2px 12px #0ea5e933', cursor: row.inGame ? 'pointer' : 'default' }}
+              onClick={() => {
+                if (row.inGame) expand(row.puuid);
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                 <span style={{ fontWeight: 700, fontSize: 18 }}>{row.name}</span>
                 <span style={{ color: '#a8b5d8', fontSize: 14 }}>({row.tag})</span>
               </div>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <img src={`/static/${row.tier.toLowerCase()}.png`} alt={row.tier} width={32} height={32} style={{ borderRadius: 6 }} />
+                <img
+                  src={`/static/${row.tier.toLowerCase()}.png`}
+                  alt={row.tier}
+                  width={32}
+                  height={32}
+                  style={{ borderRadius: 6 }}
+                />
                 <span style={{ fontWeight: 600 }}>{row.displayRank}</span>
               </div>
+
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, fontSize: 15 }}>
                 <span><b>LP:</b> {row.current}</span>
                 <span><b>Peak:</b> {row.peak}</span>
@@ -112,16 +130,80 @@ useEffect(() => {
                 <span><b>Losses:</b> <span className={row.winRate > 50 ? 'green' : 'red'}>{row.losses}</span></span>
                 <span><b>Winrate:</b> <span className={row.winRate > 50 ? 'green' : 'red'}>{row.winRate}%</span></span>
                 <span><b>Games:</b> {row.played}</span>
-                <a href={`https://www.op.gg/summoners/euw/${encodeURIComponent(row.name)}%20-${row.tag}`} target="_blank" rel="noopener noreferrer" className="opgg-link">
-                  <img src="/static/opgg.svg" alt="OP.GG" width={50} height={20} style={{ verticalAlign: 'middle' }} />
+
+                <a
+                  href={`https://www.op.gg/summoners/euw/${encodeURIComponent(row.name)}%20-${row.tag}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opgg-link"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img src="/static/opgg.svg" alt="OP.GG" width={50} height={20} />
                 </a>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Expanded live game */}
+            {expandedPuuid === row.puuid && row.inGame && (
+              <div className="glass" style={{ padding: 16, marginTop: 8 }}>
+                {isLoadingGame ? (
+                  <div style={{ textAlign: 'center' }}>Loading game data...</div>
+                ) : activeGameData ? (
+                  <Stack gap={16}>
+                    <Group justify="space-between">
+                      <div>
+                        <Badge variant="light">{activeGameData.gameQueueConfigId}</Badge>
+                        <span style={{ marginLeft: 12 }}>
+                          <GameTimer startTime={activeGameData.gameStartTime} />
+                        </span>
+                      </div>
+                    </Group>
+
+                    {[100, 200].map((teamId) => (
+                      <Stack key={teamId} gap={8}>
+                        <Badge color={teamId === 100 ? 'blue' : 'red'}>
+                          Team {teamId === 100 ? 'Blue' : 'Red'}
+                        </Badge>
+
+                        {activeGameData.participants
+                          .filter((p) => p.teamId === teamId)
+                          .map((participant) => (
+                            <Group
+                              key={participant.puuid}
+                              style={{
+                                padding: 8,
+                                borderRadius: 6,
+                                backgroundColor: 'rgba(255,255,255,0.05)',
+                              }}
+                            >
+                              <Image
+                                src={`https://lolcdn.darkintaqt.com/cdn/champion/${participant.championId}/tile`}
+                                alt="champion"
+                                loader={loaderProp}
+                                width={32}
+                                height={32}
+                              />
+                              <div style={{ flex: 1 }}>
+                                <div>{participant.riotId}</div>
+                              </div>
+                            </Group>
+                          ))}
+                      </Stack>
+                    ))}
+                  </Stack>
+                ) : (
+                  <div style={{ textAlign: 'center', color: '#a8b5d8' }}>
+                    No active game data available
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className="container">
@@ -192,26 +274,7 @@ useEffect(() => {
                                       />
                                       <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: 500 }}>{participant.riotId}</div>
-                                        {/* <div style={{ fontSize: 12, color: '#a8b5d8' }}>
-                                          {participant.bot ? 'Bot' : `Level ${participant.profileIconId}`}
-                                        </div> */}
                                       </div>
-                                      {/* <Group gap={4}>
-                                        <img
-                                          src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/Summoner${['D', 'F'][participant.spell1Id < participant.spell2Id ? 0 : 1]}.png`}
-                                          alt="spell1"
-                                          width={20}
-                                          height={20}
-                                          style={{ borderRadius: 2 }}
-                                        />
-                                        <img
-                                          src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/spell/Summoner${['D', 'F'][participant.spell1Id < participant.spell2Id ? 1 : 0]}.png`}
-                                          alt="spell2"
-                                          width={20}
-                                          height={20}
-                                          style={{ borderRadius: 2 }}
-                                        />
-                                      </Group> */}
                                     </Group>
                                   ))}
                               </Stack>
