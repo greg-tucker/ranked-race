@@ -5,6 +5,7 @@ import { getCurrentRanking, getGameStats } from '@/app/dataFetcher';
 import { Table, Stack, Group, Badge, Avatar } from '@mantine/core';
 import { GameTimer } from './GameTimer';
 import Image from 'next/image';
+import ObeRain from './ObeRain';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -26,6 +27,7 @@ export function MainRankings() {
   const [isLoadingGame, setIsLoadingGame] = useState(false);
   const [sorting, setSorting] = useState<ColumnKey>("current");
   const [ascending, setAscending] = useState(false);
+  const [isRaining, setIsRaining] = useState(false);
   function expand(puuid: string) {
     if (expandedPuuid === puuid) {
       setExpandedPuuid(null);
@@ -90,6 +92,7 @@ useEffect(() => {
 if (isMobile) {
   return (
     <div className="container">
+      <ObeRain active={isRaining} onFinish={() => setIsRaining(false)} />
       <h2 style={{ textAlign: 'center', marginBottom: 24, fontSize: 28, letterSpacing: 1, fontWeight: 700 }}>
         Live League Standings
       </h2>
@@ -101,8 +104,11 @@ if (isMobile) {
             {/* Player card */}
             <div
               className={`glass ${row.inGame ? 'inGame' : ''}`}
-              style={{ padding: 16, borderRadius: 12, boxShadow: '0 2px 12px #0ea5e933', cursor: row.inGame ? 'pointer' : 'default' }}
+              style={{ padding: 16, borderRadius: 12, boxShadow: '0 2px 12px #0ea5e933', cursor: 'pointer' }}
               onClick={() => {
+                if (row.image && row.image.toLowerCase() === 'obe.png') {
+                  setIsRaining(true);
+                }
                 if (row.inGame) expand(row.puuid);
               }}
             >
@@ -207,6 +213,7 @@ if (isMobile) {
 
   return (
     <div className="container">
+      <ObeRain active={isRaining} onFinish={() => setIsRaining(false)} />
       <div className="glass" style={{ padding: '2rem', margin: 'auto', maxWidth: 1100, }}>
         <h2 style={{ textAlign: 'center', marginBottom: 32, fontSize: 32, letterSpacing: 1, fontWeight: 700 }}>
           Live League Standings
@@ -223,7 +230,7 @@ if (isMobile) {
           <Table.Tbody>
             {sortedRankings.map((row) => (
               <React.Fragment key={row.puuid ?? row.name}>
-                <Table.Tr onClick={() =>{ if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
+                <Table.Tr onClick={() =>{ if (row.image && row.image.toLowerCase() === 'obe.png') { setIsRaining(true); } if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
                   {visibleColumns.map((column) => (
                     <Table.Td key={column.key}>
                       {typeof column.render === 'function' ? column.render(row) : String(row[column.key])}
