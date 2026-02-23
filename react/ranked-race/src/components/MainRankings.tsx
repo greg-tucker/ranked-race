@@ -6,6 +6,7 @@ import { Table, Stack, Group, Badge, Avatar } from '@mantine/core';
 import { GameTimer } from './GameTimer';
 import Image from 'next/image';
 import ObeRain from './ObeRain';
+import CarDrive from './CarDrive';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -28,6 +29,7 @@ export function MainRankings() {
   const [sorting, setSorting] = useState<ColumnKey>("current");
   const [ascending, setAscending] = useState(false);
   const [isRaining, setIsRaining] = useState(false);
+  const [isDriving, setIsDriving] = useState(false);
   function expand(puuid: string) {
     if (expandedPuuid === puuid) {
       setExpandedPuuid(null);
@@ -108,6 +110,12 @@ if (isMobile) {
               onClick={() => {
                 if (row.image && row.image.toLowerCase() === 'obe.png') {
                   setIsRaining(true);
+                }
+                if (row.image && row.image.toLowerCase() === 'joe1.jpg') {
+                  setIsDriving(true);
+                }
+                if (row.name && row.name.toLowerCase() === 'crochecha') {
+                  setIsDriving(true);
                 }
                 if (row.inGame) expand(row.puuid);
               }}
@@ -214,6 +222,7 @@ if (isMobile) {
   return (
     <div className="container">
       <ObeRain active={isRaining} onFinish={() => setIsRaining(false)} />
+      <CarDrive active={isDriving} onFinish={() => setIsDriving(false)} carSrc={'/static/car.png'} driverSrc={'/static/joe2.png'} />
       <div className="glass" style={{ padding: '2rem', margin: 'auto', maxWidth: 1100, }}>
         <h2 style={{ textAlign: 'center', marginBottom: 32, fontSize: 32, letterSpacing: 1, fontWeight: 700 }}>
           Live League Standings
@@ -230,7 +239,7 @@ if (isMobile) {
           <Table.Tbody>
             {sortedRankings.map((row) => (
               <React.Fragment key={row.puuid ?? row.name}>
-                <Table.Tr onClick={() =>{ if (row.image && row.image.toLowerCase() === 'obe.png') { setIsRaining(true); } if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
+                <Table.Tr onClick={() =>{ if (row.image && row.image.toLowerCase() === 'obe.png') { setIsRaining(true); } if (row.image && row.image.toLowerCase() === 'joe1.jpg') { setIsDriving(true); } if (row.name && row.name.toLowerCase() === 'crochecha') { setIsDriving(true); } if (row.inGame) expand(row.puuid)}} className={row.inGame ? 'inGame' : ''}>
                   {visibleColumns.map((column) => (
                     <Table.Td key={column.key}>
                       {typeof column.render === 'function' ? column.render(row) : String(row[column.key])}
