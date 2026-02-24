@@ -91,7 +91,7 @@ func filterRankedEntriesForGameType(entries []RankedEntry, queueType string) (en
 func getPlayerStats(inputPlayer InputPlayer) (player PlayerStats, found bool) {
 	acc, err := getAccountFromNameAndTag(inputPlayer)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return PlayerStats{}, false
 	}
 
